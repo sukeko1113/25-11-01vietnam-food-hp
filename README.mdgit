@@ -1,0 +1,19 @@
+# 25-11-01Vietnam-food
+initgit
+add
+README.mdgit
+commit
+-m
+first commit
+git
+branch
+-M
+maingit
+remote
+add
+origin
+https://github.com/sukeko1113/25-11-01Vietnam-food.gitgit
+push
+-u
+origin
+main
