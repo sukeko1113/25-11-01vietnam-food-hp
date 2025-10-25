@@ -581,11 +581,14 @@
             }
 
             // 2. コンテンツをFirestoreに保存する
+            // 2. コンテンツをFirestoreに保存する
             async function saveContent(key, content) {
-                if (!auth.currentUser) {
-                    console.error("User not authenticated. Cannot save.");
+                // ▼▼▼ このif文の条件を変更してください ▼▼▼
+                if (!contentRef || !auth || !auth.currentUser) {
+                    console.error("Firebase not initialized or user not authenticated. Cannot save.");
                     return;
                 }
+                // ▲▲▲ ここまで ▲▲▲
                 try {
                     await setDoc(contentRef, { [key]: content }, { merge: true });
                     // console.log(`Saved ${key} to Firestore`);
