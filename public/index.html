@@ -644,7 +644,25 @@
                     input.addEventListener('change', async (e) => {
                         const newImageUrl = e.target.value;
                         const targetKey = e.target.dataset.target;
+
                         if (newImageUrl && targetKey && body.classList.contains('admin-mode')) {
+                            // --- ここから変更 ---
+                            // ローカルでの即時反映のためにDOMを直接更新
+                            const targetImages = document.querySelectorAll(`img[data-key="${targetKey}"]`);
+                            targetImages.forEach(img => {
+                                img.src = newImageUrl;
+                            });
+
+                            // ヒーローセクションの背景画像も更新
+                            if (targetKey === 'hero_image') {
+                                const hero = document.getElementById('hero-section');
+                                if (hero) {
+                                    hero.style.backgroundImage = `url('${newImageUrl}')`;
+                                }
+                            }
+                            // --- ここまで変更 ---
+
+                            // Firestoreへの保存（接続されていれば実行される）
                             await saveContent(targetKey, newImageUrl);
                         }
                     });
