@@ -423,8 +423,21 @@
     <script type="module">
         // Firebase SDKのインポート
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, onSnapshot, setDoc, getDoc, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼
+        // ★★★ここにFirebase設定を貼り付け★★★
+        const firebaseConfig = {
+            apiKey: "AIzaSyBLdFm8qUbVkuoerObgxk-YL_59Q-pFA3Y",
+            authDomain: "vietnam-food-5cef0.firebaseapp.com",
+            projectId: "vietnam-food-5cef0",
+            storageBucket: "vietnam-food-5cef0.firebasestorage.app",
+            messagingSenderId: "661323748507",
+            appId: "1:661323748507:web:0b826c7fd1c0447ee5223e",
+            measurementId: "G-26NR12P8BL"
+        };
+        // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
 
         // --- ページ切り替え機能 ---
         window.showPage = (pageId) => {
@@ -438,9 +451,7 @@
             }
         }
 
-        // --- 管理者モードとFirebase機能 ---
-        document.addEventListener('DOMContentLoaded', async () => {
-            // DOM要素の取得
+        document.addEventListener('DOMContentLoaded', () => {
             const adminSwitch = document.getElementById('admin-switch');
             const body = document.body;
             const editableElements = document.querySelectorAll('[data-key]');
@@ -451,77 +462,44 @@
             const passwordCancel = document.getElementById('password-cancel');
             const passwordError = document.getElementById('password-error');
 
-            // Firebaseの初期化と設定
             let db, auth, contentRef;
-
-            // ★ 変更点: サイト全体のデータを保持する変数を追加
             let siteData = {};
 
-            // Canvas環境から設定を読み込む
-            // Canvas環境から設定を読み込む
-            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-            const firebaseConfig = (typeof __firebase_config !== 'undefined') ? JSON.parse(__firebase_config) : null;
-
-            // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
-            // ★★★ この2行を `if` の前に移動します ★★★
-            // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+            // UI関連のイベントリスナーを先に設定
             setupAdminModeListeners();
             setupQuizListeners();
 
-            if (!firebaseConfig) {
-                console.error("Firebase config is not available.");
-                // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
-                // ★★★ ここの `return;` は削除しないでください ★★★
-                // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
-                return; // Firebaseが設定されていない場合は何もしない
-            }
-
+            // Firebaseの初期化
             try {
                 const app = initializeApp(firebaseConfig);
-                // ... (以下、Firebase関連のコードが続く)
-
                 db = getFirestore(app);
                 auth = getAuth(app);
-                // setLogLevel('debug'); // デバッグログ
+                // ドキュメントのパスを簡略化
+                contentRef = doc(db, 'site', 'content');
 
-                // Firestoreのドキュメント参照 (公開データを想定)
-                contentRef = doc(db, 'artifacts', appId, 'public', 'data', 'siteContent', 'content');
-
-                // 認証
-                if (typeof __initial_auth_token !== 'undefined') {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
-
-                // console.log("Firebase initialized and user signed in:", auth.currentUser?.uid);
-
-                // 1. Firestoreからコンテンツを読み込み、リアルタイムでリッスンする
-                setupRealtimeListener();
-
-                // 2. 管理者モードのイベントリスナーを設定
-                setupAdminModeListeners();
-
-                // 3. クイズのイベントリスナーを設定
-                setupQuizListeners();
+                signInAnonymously(auth)
+                    .then(() => {
+                        console.log("Signed in anonymously.");
+                        // リアルタイムリスナーを設定
+                        setupRealtimeListener();
+                    })
+                    .catch((error) => {
+                        console.error("Anonymous sign-in failed:", error);
+                    });
 
             } catch (error) {
                 console.error("Firebase initialization failed:", error);
+                alert("Firebaseの初期化に失敗しました。設定情報を確認してください。");
             }
 
-            // --- 関数定義 ---
 
-            // 1. リアルタイムリスナーの設定
             function setupRealtimeListener() {
                 onSnapshot(contentRef, (docSnap) => {
                     if (docSnap.exists()) {
-                        // ★ 変更点: siteData にデータを格納
                         siteData = docSnap.data();
-                        // console.log("Received data from Firestore:", siteData);
                         updateDOM(siteData);
                     } else {
-                        console.log("No content document found. Initializing default content.");
-                        // ドキュメントが存在しない場合、デフォルトのHTMLコンテンツで初期化
+                        console.log("No content document found. Creating one...");
                         initializeDefaultContent();
                     }
                 }, (error) => {
@@ -529,149 +507,108 @@
                 });
             }
 
-            // DOMをデータで更新する
             function updateDOM(data) {
                 editableElements.forEach(el => {
                     const key = el.dataset.key;
-                    if (data[key] !== undefined) { // data[key] が存在するか (空文字列も許可)
+                    if (data[key] !== undefined) {
                         if (el.tagName === 'IMG') {
                             if (el.src !== data[key]) el.src = data[key];
-                        } else if (el.tagName === 'INPUT') { // ★ 変更点: クイズの正解番号入力欄
+                        } else if (el.tagName === 'INPUT') {
                             if (el.value !== data[key]) el.value = data[key];
                         } else {
                             if (el.textContent !== data[key]) el.textContent = data[key];
                         }
                     }
                 });
-
-                // ★ 変更点: ヒーロー画像の背景を更新
                 const hero = document.getElementById('hero-section');
                 if (data['hero_image'] && hero) {
                     hero.style.backgroundImage = `url('${data['hero_image']}')`;
                 }
             }
 
-            // (オプション) 初回にデフォルトコンテンツを書き込む
             async function initializeDefaultContent() {
-                const defaultContent = {
-                    // ★ 変更点: ヒーロー画像のデフォルトURL
-                    "hero_image": "https://images.unsplash.com/photo-1534351590666-13e3e96b5017?q=80&w=1200&auto=format&fit=crop",
-                    // ★ 変更点: クイズの正解番号
-                    "quiz_correct_ans": "2"
-                };
-
+                const defaultContent = {};
                 editableElements.forEach(el => {
                     const key = el.dataset.key;
                     if (el.tagName === 'IMG') {
-                        defaultContent[key] = el.src; // プレースホルダーまたは既存のsrc
-                    } else if (el.tagName === 'INPUT') { // ★ 変更点: クイズの正解番号
-                        defaultContent[key] = el.value.trim() || "2"; //
+                        defaultContent[key] = el.src;
+                    } else if (el.tagName === 'INPUT') {
+                        defaultContent[key] = el.value.trim();
                     } else {
                         defaultContent[key] = el.textContent.trim();
                     }
                 });
-
-                try {
-                    // ドキュメントが既に存在するか確認 (onSnapshotが先に実行されるため、ここではsetDocのみ)
-                    await setDoc(contentRef, defaultContent);
-                    console.log("Default content initialized in Firestore.");
-                } catch (error) {
-                    console.error("Error initializing default content:", error);
+                if (!defaultContent["hero_image"]) {
+                    defaultContent["hero_image"] = "https://images.unsplash.com/photo-1534351590666-13e3e96b5017?q=80&w=1200&auto=format&fit=crop";
                 }
+                if (!defaultContent["quiz_correct_ans"]) {
+                    defaultContent["quiz_correct_ans"] = "2";
+                }
+                await saveContentBatch(defaultContent);
             }
 
-            // 2. コンテンツをFirestoreに保存する
-            // 2. コンテンツをFirestoreに保存する
             async function saveContent(key, content) {
-                // ▼▼▼ このif文の条件を変更してください ▼▼▼
-                if (!contentRef || !auth || !auth.currentUser) {
-                    console.error("Firebase not initialized or user not authenticated. Cannot save.");
-                    return;
-                }
-                // ▲▲▲ ここまで ▲▲▲
+                if (!contentRef || !auth.currentUser) return;
                 try {
                     await setDoc(contentRef, { [key]: content }, { merge: true });
-                    // console.log(`Saved ${key} to Firestore`);
                 } catch (error) {
                     console.error("Error saving content:", error);
                 }
             }
 
-            // 3. 管理者モードの状態を切り替える
-            function toggleAdminMode(isAdmin) {
-                if (isAdmin) {
-                    body.classList.add('admin-mode');
-                    editableElements.forEach(el => {
-                        if (el.tagName !== 'IMG' && el.tagName !== 'INPUT') { // INPUTは contentEditable にしない
-                            el.contentEditable = true;
-                        } else if (el.tagName === 'INPUT' && el.dataset.key === 'quiz_correct_ans') {
-                            el.readOnly = false; // クイズの正解番号入力欄を有効化
-                        }
-                    });
-                } else {
-                    body.classList.remove('admin-mode');
-                    editableElements.forEach(el => {
-                        if (el.tagName !== 'IMG' && el.tagName !== 'INPUT') {
-                            el.contentEditable = false;
-                        } else if (el.tagName === 'INPUT' && el.dataset.key === 'quiz_correct_ans') {
-                            el.readOnly = true; // クイズの正解番号入力欄を無効化
-                        }
-                    });
+            async function saveContentBatch(data) {
+                if (!contentRef || !auth.currentUser) return;
+                try {
+                    await setDoc(contentRef, data, { merge: true });
+                } catch (error) {
+                    console.error("Error saving batch content:", error);
                 }
-                // 管理者モードの状態はローカルに保存
+            }
+
+
+            function toggleAdminMode(isAdmin) {
+                body.classList.toggle('admin-mode', isAdmin);
+                editableElements.forEach(el => {
+                    if (el.tagName !== 'IMG' && el.tagName !== 'INPUT') {
+                        el.contentEditable = isAdmin;
+                    } else if (el.dataset.key === 'quiz_correct_ans') {
+                        el.readOnly = !isAdmin;
+                    }
+                });
                 localStorage.setItem('adminMode', isAdmin);
             }
 
-            // 4. イベントリスナーを設定
             function setupAdminModeListeners() {
-                // テキスト編集
                 editableElements.forEach(el => {
-                    if (el.tagName !== 'IMG') { // IMG 以外 (TEXT, INPUT)
-                        el.addEventListener('blur', async () => {
+                    if (el.tagName !== 'IMG') {
+                        el.addEventListener('blur', () => {
                             if (body.classList.contains('admin-mode')) {
                                 const key = el.dataset.key;
-                                let content;
-                                if (el.tagName === 'INPUT') {
-                                    content = el.value.trim();
-                                } else {
-                                    content = el.textContent.trim();
-                                }
-                                await saveContent(key, content);
+                                const content = (el.tagName === 'INPUT') ? el.value.trim() : el.textContent.trim();
+                                saveContent(key, content);
                             }
                         });
                     }
                 });
 
-                // 画像URL編集
                 imageInputs.forEach(input => {
-                    input.addEventListener('change', async (e) => {
-                        const newImageUrl = e.target.value;
-                        const targetKey = e.target.dataset.target;
-
-                        if (newImageUrl && targetKey && body.classList.contains('admin-mode')) {
-                            // --- ここから変更 ---
-                            // ローカルでの即時反映のためにDOMを直接更新
-                            const targetImages = document.querySelectorAll(`img[data-key="${targetKey}"]`);
-                            targetImages.forEach(img => {
-                                img.src = newImageUrl;
-                            });
-
-                            // ヒーローセクションの背景画像も更新
-                            if (targetKey === 'hero_image') {
-                                const hero = document.getElementById('hero-section');
-                                if (hero) {
-                                    hero.style.backgroundImage = `url('${newImageUrl}')`;
+                    input.addEventListener('change', (e) => {
+                        if (body.classList.contains('admin-mode')) {
+                            const newImageUrl = e.target.value;
+                            const targetKey = e.target.dataset.target;
+                            if (newImageUrl && targetKey) {
+                                document.querySelectorAll(`[data-key="${targetKey}"]`).forEach(el => {
+                                    if (el.tagName === 'IMG') el.src = newImageUrl;
+                                });
+                                if (targetKey === 'hero_image') {
+                                    document.getElementById('hero-section').style.backgroundImage = `url('${newImageUrl}')`;
                                 }
+                                saveContent(targetKey, newImageUrl);
                             }
-                            // --- ここまで変更 ---
-
-                            // Firestoreへの保存（接続されていれば実行される）
-                            await saveContent(targetKey, newImageUrl);
                         }
                     });
                 });
 
-                // 管理者スイッチ
                 adminSwitch.addEventListener('change', (e) => {
                     if (e.target.checked) {
                         e.preventDefault();
@@ -683,76 +620,51 @@
                     }
                 });
 
-                // パスワード認証
                 const handlePasswordSubmit = () => {
-                    if (passwordInput.value === '0003') { // パスワードを変更
+                    if (passwordInput.value === '0003') {
                         passwordModal.classList.add('hidden');
-                        passwordInput.value = '';
-                        passwordError.textContent = ' ';
-
                         adminSwitch.checked = true;
                         toggleAdminMode(true);
                     } else {
                         passwordError.textContent = 'パスワードが違います。';
-                        passwordInput.value = '';
-                        passwordInput.focus();
                     }
+                    passwordInput.value = '';
                 };
 
                 passwordSubmit.addEventListener('click', handlePasswordSubmit);
-                passwordInput.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter') handlePasswordSubmit();
-                });
-
+                passwordInput.addEventListener('keydown', (e) => e.key === 'Enter' && handlePasswordSubmit());
                 passwordCancel.addEventListener('click', () => {
                     passwordModal.classList.add('hidden');
                     passwordInput.value = '';
-                    passwordError.textContent = ' ';
-                    adminSwitch.checked = false;
+                    passwordError.textContent = '';
                 });
 
-                // 5. 初期化 (ローカルの管理者状態を復元)
                 const savedAdminState = localStorage.getItem('adminMode') === 'true';
-                adminSwitch.checked = savedAdminState;
-                toggleAdminMode(savedAdminState);
-
-                // クイズ正解入力欄の初期読み取り専用状態を設定
-                document.querySelector('[data-key="quiz_correct_ans"]').readOnly = !savedAdminState;
+                if (savedAdminState) {
+                    adminSwitch.checked = true;
+                    toggleAdminMode(true);
+                }
             }
 
-            // 5. クイズ機能のリスナーを設定
             function setupQuizListeners() {
                 const quizForm = document.getElementById('quiz-form');
-                const quizSubmit = document.getElementById('quiz-submit');
+                if (!quizForm) return;
+
                 const quizResult = document.getElementById('quiz-result');
                 const couponModal = document.getElementById('coupon-modal');
                 const couponClose = document.getElementById('coupon-close');
                 const couponPrintClose = document.getElementById('coupon-print-close');
 
-                // ★ 変更点: 正解を siteData から取得
-                // const correctAnswer = "2"; // 2. パン
-
-                if (!quizForm) return; // クイズフォームがなければ何もしない
-
                 quizForm.addEventListener('submit', (e) => {
                     e.preventDefault();
-                    const formData = new FormData(quizForm);
-                    const selectedAnswer = formData.get('quiz_answer');
-
-                    // ★ 変更点: 正解を siteData から取得 (フォールバック)
+                    const selectedAnswer = new FormData(quizForm).get('quiz_answer');
                     const correctAnswer = siteData.quiz_correct_ans || "2";
-
                     quizResult.classList.remove('quiz-correct', 'quiz-incorrect');
 
                     if (selectedAnswer === correctAnswer) {
                         quizResult.textContent = '🎉 正解です！割引券を表示します！ 🎉';
                         quizResult.classList.add('quiz-correct');
-
-                        // 割引券モーダルを表示
-                        setTimeout(() => {
-                            couponModal.classList.remove('hidden');
-                        }, 1000); // 1秒後に表示
-
+                        setTimeout(() => couponModal.classList.remove('hidden'), 1000);
                     } else if (selectedAnswer) {
                         quizResult.textContent = '残念、不正解です...。';
                         quizResult.classList.add('quiz-incorrect');
@@ -761,16 +673,9 @@
                         quizResult.classList.add('quiz-incorrect');
                     }
                 });
-
-                const closeCouponModal = () => {
-                    couponModal.classList.add('hidden');
-                };
-
+                const closeCouponModal = () => couponModal.classList.add('hidden');
                 couponClose.addEventListener('click', closeCouponModal);
                 couponPrintClose.addEventListener('click', closeCouponModal);
             }
         });
     </script>
-</body>
-
-</html>
