@@ -426,19 +426,6 @@
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼
-        // ★★★ここにFirebase設定を貼り付け★★★
-        const firebaseConfig = {
-            apiKey: "AIzaSyBLdFm8qUbVkuoerObgxk-YL_59Q-pFA3Y",
-            authDomain: "vietnam-food-5cef0.firebaseapp.com",
-            projectId: "vietnam-food-5cef0",
-            storageBucket: "vietnam-food-5cef0.firebasestorage.app",
-            messagingSenderId: "661323748507",
-            appId: "1:661323748507:web:0b826c7fd1c0447ee5223e",
-            measurementId: "G-26NR12P8BL"
-        };
-        // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
-
         // --- ページ切り替え機能 ---
         window.showPage = (pageId) => {
             ['page-main', 'page-banh-mi', 'page-goi-cuon', 'page-che'].forEach(id => {
@@ -451,7 +438,9 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
+        // --- メイン処理 ---
+        document.addEventListener('DOMContentLoaded', async () => {
+            // DOM要素の取得
             const adminSwitch = document.getElementById('admin-switch');
             const body = document.body;
             const editableElements = document.querySelectorAll('[data-key]');
@@ -462,48 +451,60 @@
             const passwordCancel = document.getElementById('password-cancel');
             const passwordError = document.getElementById('password-error');
 
+            // Firebase関連の変数を宣言
             let db, auth, contentRef;
             let siteData = {};
 
-            // UI関連のイベントリスナーを先に設定
+            // 最初にUI関連のイベントリスナーを設定
             setupAdminModeListeners();
             setupQuizListeners();
 
-            // Firebaseの初期化
+            // Firebaseの初期化処理
             try {
-                const app = initializeApp(firebaseConfig);
+                // ホスティング環境から設定を自動取得、なければnull
+                const autoConfig = (typeof __firebase_config !== 'undefined') ? JSON.parse(__firebase_config) : null;
+                if (!autoConfig) {
+                    throw new Error("Firebaseの自動設定情報が見つかりません。");
+                }
+
+                const app = initializeApp(autoConfig);
                 db = getFirestore(app);
                 auth = getAuth(app);
-                // ドキュメントのパスを簡略化
-                contentRef = doc(db, 'site', 'content');
 
-                signInAnonymously(auth)
-                    .then(() => {
-                        console.log("Signed in anonymously.");
-                        // リアルタイムリスナーを設定
-                        setupRealtimeListener();
-                    })
-                    .catch((error) => {
-                        console.error("Anonymous sign-in failed:", error);
-                    });
+                // ★ Firestoreのデータ保存場所を、初期の設計に合わせて元に戻します
+                const appId = autoConfig.appId || 'default-app-id';
+                contentRef = doc(db, 'artifacts', appId, 'public', 'data', 'siteContent', 'content');
+
+                // 匿名認証でサインイン
+                await signInAnonymously(auth);
+                console.log("Firebase Auth: Signed in anonymously.");
+
+                // 認証後にFirestoreのリスナーを開始
+                setupRealtimeListener();
 
             } catch (error) {
-                console.error("Firebase initialization failed:", error);
-                alert("Firebaseの初期化に失敗しました。設定情報を確認してください。");
+                console.error("Firebase Initialization Failed:", error);
+                // ユーザーにエラーを通知
+                const errorElement = document.createElement('div');
+                errorElement.style.cssText = 'position:fixed; top:10px; left:10px; padding:15px; background:red; color:white; z-index:1000; border-radius:8px;';
+                errorElement.textContent = `Firebase接続エラー: ${error.message}`;
+                document.body.appendChild(errorElement);
             }
 
+            // --- 関数定義 ---
 
             function setupRealtimeListener() {
                 onSnapshot(contentRef, (docSnap) => {
                     if (docSnap.exists()) {
+                        console.log("Firestore data received.");
                         siteData = docSnap.data();
                         updateDOM(siteData);
                     } else {
-                        console.log("No content document found. Creating one...");
+                        console.log("No document found. Initializing with default content.");
                         initializeDefaultContent();
                     }
                 }, (error) => {
-                    console.error("Error listening to content:", error);
+                    console.error("Firestore listener error:", error);
                 });
             }
 
@@ -530,41 +531,38 @@
                 const defaultContent = {};
                 editableElements.forEach(el => {
                     const key = el.dataset.key;
-                    if (el.tagName === 'IMG') {
-                        defaultContent[key] = el.src;
-                    } else if (el.tagName === 'INPUT') {
-                        defaultContent[key] = el.value.trim();
-                    } else {
-                        defaultContent[key] = el.textContent.trim();
-                    }
+                    if (el.tagName === 'IMG') defaultContent[key] = el.src;
+                    else if (el.tagName === 'INPUT') defaultContent[key] = el.value.trim();
+                    else defaultContent[key] = el.textContent.trim();
                 });
-                if (!defaultContent["hero_image"]) {
-                    defaultContent["hero_image"] = "https://images.unsplash.com/photo-1534351590666-13e3e96b5017?q=80&w=1200&auto=format&fit=crop";
-                }
-                if (!defaultContent["quiz_correct_ans"]) {
-                    defaultContent["quiz_correct_ans"] = "2";
-                }
                 await saveContentBatch(defaultContent);
             }
 
             async function saveContent(key, content) {
-                if (!contentRef || !auth.currentUser) return;
+                if (!contentRef || !auth.currentUser) {
+                    console.warn("Cannot save: Firebase not ready.");
+                    return;
+                }
                 try {
+                    console.log(`Saving: { ${key}: "${content}" }`);
                     await setDoc(contentRef, { [key]: content }, { merge: true });
+                    console.log("Save successful.");
                 } catch (error) {
                     console.error("Error saving content:", error);
                 }
             }
 
             async function saveContentBatch(data) {
-                if (!contentRef || !auth.currentUser) return;
+                if (!contentRef || !auth.currentUser) {
+                    console.warn("Cannot save batch: Firebase not ready.");
+                    return;
+                }
                 try {
                     await setDoc(contentRef, data, { merge: true });
                 } catch (error) {
                     console.error("Error saving batch content:", error);
                 }
             }
-
 
             function toggleAdminMode(isAdmin) {
                 body.classList.toggle('admin-mode', isAdmin);
@@ -597,9 +595,7 @@
                             const newImageUrl = e.target.value;
                             const targetKey = e.target.dataset.target;
                             if (newImageUrl && targetKey) {
-                                document.querySelectorAll(`[data-key="${targetKey}"]`).forEach(el => {
-                                    if (el.tagName === 'IMG') el.src = newImageUrl;
-                                });
+                                document.querySelectorAll(`img[data-key="${targetKey}"]`).forEach(img => img.src = newImageUrl);
                                 if (targetKey === 'hero_image') {
                                     document.getElementById('hero-section').style.backgroundImage = `url('${newImageUrl}')`;
                                 }
@@ -649,7 +645,6 @@
             function setupQuizListeners() {
                 const quizForm = document.getElementById('quiz-form');
                 if (!quizForm) return;
-
                 const quizResult = document.getElementById('quiz-result');
                 const couponModal = document.getElementById('coupon-modal');
                 const couponClose = document.getElementById('coupon-close');
@@ -660,16 +655,12 @@
                     const selectedAnswer = new FormData(quizForm).get('quiz_answer');
                     const correctAnswer = siteData.quiz_correct_ans || "2";
                     quizResult.classList.remove('quiz-correct', 'quiz-incorrect');
-
                     if (selectedAnswer === correctAnswer) {
                         quizResult.textContent = '🎉 正解です！割引券を表示します！ 🎉';
                         quizResult.classList.add('quiz-correct');
                         setTimeout(() => couponModal.classList.remove('hidden'), 1000);
-                    } else if (selectedAnswer) {
-                        quizResult.textContent = '残念、不正解です...。';
-                        quizResult.classList.add('quiz-incorrect');
                     } else {
-                        quizResult.textContent = '答えを選んでください。';
+                        quizResult.textContent = selectedAnswer ? '残念、不正解です...。' : '答えを選んでください。';
                         quizResult.classList.add('quiz-incorrect');
                     }
                 });
