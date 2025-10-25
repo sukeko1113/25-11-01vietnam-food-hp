@@ -426,6 +426,20 @@
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
+        // ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼
+        // ★★★ここにFirebase設定を貼り付け★★★
+        const firebaseConfig = {
+            apiKey: "AIzaSyBLdFm8qUbVkuoerObgxk-YL_59Q-pFA3Y",
+            authDomain: "vietnam-food-5cef0.firebaseapp.com",
+            projectId: "vietnam-food-5cef0",
+            storageBucket: "vietnam-food-5cef0.firebasestorage.app",
+            messagingSenderId: "661323748507",
+            appId: "1:661323748507:web:0b826c7fd1c0447ee5223e",
+            measurementId: "G-26NR12P8BL"
+        };
+        // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
+
         // --- ページ切り替え機能 ---
         window.showPage = (pageId) => {
             ['page-main', 'page-banh-mi', 'page-goi-cuon', 'page-che'].forEach(id => {
@@ -461,19 +475,14 @@
 
             // Firebaseの初期化処理
             try {
-                // ホスティング環境から設定を自動取得、なければnull
-                const autoConfig = (typeof __firebase_config !== 'undefined') ? JSON.parse(__firebase_config) : null;
-                if (!autoConfig) {
-                    throw new Error("Firebaseの自動設定情報が見つかりません。");
+                if (!firebaseConfig || !firebaseConfig.apiKey) {
+                    throw new Error("Firebase設定情報が正しくありません。");
                 }
 
-                const app = initializeApp(autoConfig);
+                const app = initializeApp(firebaseConfig);
                 db = getFirestore(app);
                 auth = getAuth(app);
-
-                // ★ Firestoreのデータ保存場所を、初期の設計に合わせて元に戻します
-                const appId = autoConfig.appId || 'default-app-id';
-                contentRef = doc(db, 'artifacts', appId, 'public', 'data', 'siteContent', 'content');
+                contentRef = doc(db, 'siteContent', 'content'); // シンプルなパスに変更
 
                 // 匿名認証でサインイン
                 await signInAnonymously(auth);
@@ -484,7 +493,6 @@
 
             } catch (error) {
                 console.error("Firebase Initialization Failed:", error);
-                // ユーザーにエラーを通知
                 const errorElement = document.createElement('div');
                 errorElement.style.cssText = 'position:fixed; top:10px; left:10px; padding:15px; background:red; color:white; z-index:1000; border-radius:8px;';
                 errorElement.textContent = `Firebase接続エラー: ${error.message}`;
@@ -539,24 +547,16 @@
             }
 
             async function saveContent(key, content) {
-                if (!contentRef || !auth.currentUser) {
-                    console.warn("Cannot save: Firebase not ready.");
-                    return;
-                }
+                if (!contentRef || !auth.currentUser) return;
                 try {
-                    console.log(`Saving: { ${key}: "${content}" }`);
                     await setDoc(contentRef, { [key]: content }, { merge: true });
-                    console.log("Save successful.");
                 } catch (error) {
                     console.error("Error saving content:", error);
                 }
             }
 
             async function saveContentBatch(data) {
-                if (!contentRef || !auth.currentUser) {
-                    console.warn("Cannot save batch: Firebase not ready.");
-                    return;
-                }
+                if (!contentRef || !auth.currentUser) return;
                 try {
                     await setDoc(contentRef, data, { merge: true });
                 } catch (error) {
