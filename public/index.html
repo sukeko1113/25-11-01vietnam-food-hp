@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,22 +8,29 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
     <style>
         body {
             font-family: 'M PLUS Rounded 1c', sans-serif;
             background-color: #FFF8F0;
             scroll-behavior: smooth;
         }
+
         .font-display {
             font-family: 'Playfair Display', serif;
         }
+
         /* ★ 変更点: background-imageを削除し、JSで設定するようにします */
         .hero-bg {
             background-size: cover;
             background-position: center;
         }
-        .hidden { display: none; }
+
+        .hidden {
+            display: none;
+        }
 
         /* 管理者モード用のスタイル */
         .admin-mode [data-key] {
@@ -31,10 +39,12 @@
             transition: all 0.2s ease-in-out;
             cursor: text;
         }
+
         .admin-mode [data-key]:hover {
             outline-width: 3px;
             background-color: #ffedd5;
         }
+
         .admin-image-input {
             display: none;
             width: 100%;
@@ -44,18 +54,20 @@
             border-radius: 4px;
             font-size: 14px;
         }
+
         .admin-mode .admin-image-input {
             display: block;
         }
-        
+
         /* ★ 新規追加: 管理者モード専用アイテムのスタイル */
         .admin-only-item {
             display: none;
         }
+
         .admin-mode .admin-only-item {
             display: block;
         }
-        
+
         /* ★ 新規追加: 管理者モード時のクイズ入力欄のスタイル */
         .admin-mode input[data-key="quiz_correct_ans"]:not(:read-only) {
             outline: 2px dashed #fb923c;
@@ -63,30 +75,37 @@
         }
 
         /* スイッチのスタイル */
-        #admin-switch:checked ~ .dot {
+        #admin-switch:checked~.dot {
             transform: translateX(100%);
             background-color: #fb923c;
         }
 
         /* クイズリザルトのスタイル */
         .quiz-correct {
-            color: #15803d; /* text-green-700 */
+            color: #15803d;
+            /* text-green-700 */
         }
+
         .quiz-incorrect {
-            color: #dc2626; /* text-red-600 */
+            color: #dc2626;
+            /* text-red-600 */
         }
     </style>
 </head>
+
 <body class="text-gray-900">
 
     <div id="page-main">
         <header class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-40">
             <div class="container mx-auto px-6 py-4">
                 <div class="flex items-center">
-                    <img data-key="header_logo" src="https://nishimura-seminar.kg-link.net/wp-content/uploads/2025/06/%E3%83%AD%E3%82%B4%E6%A8%AA%E3%81%AB%E6%96%87%E5%AD%97-1024x447.png" alt="西村ゼミ ロゴ" class="h-8 mr-3">
+                    <img data-key="header_logo"
+                        src="https://nishimura-seminar.kg-link.net/wp-content/uploads/2025/06/%E3%83%AD%E3%82%B4%E6%A8%AA%E3%81%AB%E6%96%87%E5%AD%97-1024x447.png"
+                        alt="西村ゼミ ロゴ" class="h-8 mr-3">
                     <h1 class="text-2xl font-bold font-display text-orange-800">Nisimura Kitchen</h1>
                 </div>
-                <input type="text" class="admin-image-input" data-target="header_logo" placeholder="ロゴ画像URL..." style="width: 300px; margin-top: 8px;">
+                <input type="text" class="admin-image-input" data-target="header_logo" placeholder="ロゴ画像URL..."
+                    style="width: 300px; margin-top: 8px;">
                 <p class="text-sm text-orange-700 mt-1">学園祭で出会う、本格ベトナム。</p>
             </div>
         </header>
@@ -96,26 +115,28 @@
                     【速報】営業中！元気に準備しています！
                 </p>
             </section>
-            
+
             <section class="bg-teal-600 text-white py-4 text-center font-bold shadow-lg">
                 <p data-key="callout_message" class="text-2xl animate-pulse" style="min-height: 1.5em;">
                     【お呼び出し】現在、お呼び出し中の番号はございません。
                 </p>
             </section>
-            
+
             <section class="bg-white text-orange-700 py-3 text-center font-bold shadow-md">
                 <p class="text-lg">
                     ✨ オープンキャンパスチケット利用可能店舗です ✨
                 </p>
             </section>
-            
-            <section id="hero-section" class="hero-bg text-white min-h-[50vh] flex items-center" style="background-size: cover; background-position: center;">
+
+            <section id="hero-section" class="hero-bg text-white min-h-[50vh] flex items-center"
+                style="background-size: cover; background-position: center;">
                 <div class="container mx-auto px-6 py-20 text-center bg-black/40 rounded-lg m-4 md:m-8 relative">
                     <h2 class="text-4xl md:text-6xl font-bold font-display leading-tight mb-2">心もお腹も満たされる、</h2>
                     <h3 class="text-3xl md:text-5xl font-bold font-display">ベトナムの味。</h3>
                     <p class="mt-4 text-lg">手作りの本格ベトナム料理で、最高の学園祭体験を。</p>
-                    
-                    <input type="text" class="admin-image-input" data-target="hero_image" placeholder="ヒーロー画像URLを入力..." style="position: absolute; bottom: 10px; left: 10px; width: calc(100% - 20px); background: rgba(255,255,255,0.9); color: #333;">
+
+                    <input type="text" class="admin-image-input" data-target="hero_image" placeholder="ヒーロー画像URLを入力..."
+                        style="position: absolute; bottom: 10px; left: 10px; width: calc(100% - 20px); background: rgba(255,255,255,0.9); color: #333;">
                 </div>
             </section>
 
@@ -123,38 +144,52 @@
                 <div class="container mx-auto px-6 space-y-20">
                     <div class="md:grid md:grid-cols-2 gap-12 items-center">
                         <div class="mb-6 md:mb-0">
-                            <img data-key="banhmi_image" src="https://placehold.co/600x400/FFF8F0/CCC?text=Loading..." alt="バインミーの写真" class="rounded-lg shadow-2xl w-full h-auto object-cover">
-                            <input type="text" class="admin-image-input" data-target="banhmi_image" placeholder="新しい画像URLを入力...">
+                            <img data-key="banhmi_image" src="https://placehold.co/600x400/FFF8F0/CCC?text=Loading..."
+                                alt="バインミーの写真" class="rounded-lg shadow-2xl w-full h-auto object-cover">
+                            <input type="text" class="admin-image-input" data-target="banhmi_image"
+                                placeholder="新しい画像URLを入力...">
                         </div>
                         <div class="text-center md:text-left">
-                            <h3 data-key="banhmi_name" class="text-3xl font-bold font-display text-orange-800">絶品 バインミー</h3>
+                            <h3 data-key="banhmi_name" class="text-3xl font-bold font-display text-orange-800">絶品 バインミー
+                            </h3>
                             <p data-key="banhmi_price" class="text-4xl font-bold text-orange-600 my-3">¥800</p>
-                            <p data-key="banhmi_short_desc" class="text-base leading-relaxed text-gray-700">注文を受けてから焼き上げるサクサクのパンに、ジューシーな自家製チャーシューと、なますの酸味が絶妙にマッチ。</p>
-                            <a href="#" onclick="showPage('page-banh-mi'); return false;" class="inline-block mt-4 bg-orange-600 text-white font-bold py-2 px-6 rounded-full hover:bg-orange-700 transition-colors">詳しく見る</a>
+                            <p data-key="banhmi_short_desc" class="text-base leading-relaxed text-gray-700">
+                                注文を受けてから焼き上げるサクサクのパンに、ジューシーな自家製チャーシューと、なますの酸味が絶妙にマッチ。</p>
+                            <a href="#" onclick="showPage('page-banh-mi'); return false;"
+                                class="inline-block mt-4 bg-orange-600 text-white font-bold py-2 px-6 rounded-full hover:bg-orange-700 transition-colors">詳しく見る</a>
                         </div>
                     </div>
                     <div class="md:grid md:grid-cols-2 gap-12 items-center">
                         <div class="text-center md:text-right md:order-2">
-                            <h3 data-key="goicuon_name" class="text-3xl font-bold font-display text-green-800">新鮮 生春巻き</h3>
+                            <h3 data-key="goicuon_name" class="text-3xl font-bold font-display text-green-800">新鮮 生春巻き
+                            </h3>
                             <p data-key="goicuon_price" class="text-4xl font-bold text-green-600 my-3">¥700</p>
-                            <p data-key="goicuon_short_desc" class="text-base leading-relaxed text-gray-700">透き通るようなライスペーパーで、ぷりぷりのエビと新鮮な野菜を一本ずつ丁寧に手巻きしました。</p>
-                            <a href="#" onclick="showPage('page-goi-cuon'); return false;" class="inline-block mt-4 bg-green-600 text-white font-bold py-2 px-6 rounded-full hover:bg-green-700 transition-colors">詳しく見る</a>
+                            <p data-key="goicuon_short_desc" class="text-base leading-relaxed text-gray-700">
+                                透き通るようなライスペーパーで、ぷりぷりのエビと新鮮な野菜を一本ずつ丁寧に手巻きしました。</p>
+                            <a href="#" onclick="showPage('page-goi-cuon'); return false;"
+                                class="inline-block mt-4 bg-green-600 text-white font-bold py-2 px-6 rounded-full hover:bg-green-700 transition-colors">詳しく見る</a>
                         </div>
                         <div class="mb-6 md:mb-0 md:order-1 mt-6 md:mt-0">
-                             <img data-key="goicuon_image" src="https://placehold.co/600x400/FFF8F0/CCC?text=Loading..." alt="生春巻きの写真" class="rounded-lg shadow-2xl w-full h-auto object-cover">
-                             <input type="text" class="admin-image-input" data-target="goicuon_image" placeholder="新しい画像URLを入力...">
+                            <img data-key="goicuon_image" src="https://placehold.co/600x400/FFF8F0/CCC?text=Loading..."
+                                alt="生春巻きの写真" class="rounded-lg shadow-2xl w-full h-auto object-cover">
+                            <input type="text" class="admin-image-input" data-target="goicuon_image"
+                                placeholder="新しい画像URLを入力...">
                         </div>
                     </div>
                     <div class="md:grid md:grid-cols-2 gap-12 items-center">
                         <div class="mb-6 md:mb-0">
-                            <img data-key="che_image" src="https://placehold.co/600x400/FFF8F0/CCC?text=Loading..." alt="チェーの写真" class="rounded-lg shadow-2xl w-full h-auto object-cover">
-                            <input type="text" class="admin-image-input" data-target="che_image" placeholder="新しい画像URLを入力...">
+                            <img data-key="che_image" src="https://placehold.co/600x400/FFF8F0/CCC?text=Loading..."
+                                alt="チェーの写真" class="rounded-lg shadow-2xl w-full h-auto object-cover">
+                            <input type="text" class="admin-image-input" data-target="che_image"
+                                placeholder="新しい画像URLを入力...">
                         </div>
                         <div class="text-center md:text-left">
                             <h3 data-key="che_name" class="text-3xl font-bold font-display text-pink-700">彩り チェー</h3>
                             <p data-key="che_price" class="text-4xl font-bold text-pink-500 my-3">¥700</p>
-                            <p data-key="che_short_desc" class="text-base leading-relaxed text-gray-700">ココナッツミルクの優しい甘みが口いっぱいに広がる、ベトナムの伝統的なデザートです。</p>
-                            <a href="#" onclick="showPage('page-che'); return false;" class="inline-block mt-4 bg-pink-600 text-white font-bold py-2 px-6 rounded-full hover:bg-pink-700 transition-colors">詳しく見る</a>
+                            <p data-key="che_short_desc" class="text-base leading-relaxed text-gray-700">
+                                ココナッツミルクの優しい甘みが口いっぱいに広がる、ベトナムの伝統的なデザートです。</p>
+                            <a href="#" onclick="showPage('page-che'); return false;"
+                                class="inline-block mt-4 bg-pink-600 text-white font-bold py-2 px-6 rounded-full hover:bg-pink-700 transition-colors">詳しく見る</a>
                         </div>
                     </div>
                 </div>
@@ -166,26 +201,36 @@
                     <p class="text-gray-700 mb-8 text-lg">クイズに正解して、お得な割引券をゲットしよう！</p>
                     <div class="bg-white p-8 rounded-lg shadow-xl">
                         <form id="quiz-form">
-                            <h4 data-key="quiz_question" class="text-xl font-bold mb-6">【問題】<br>ベトナムの伝統的なサンドイッチ「バインミー」。この「バイン」とは、ベトナム語で一般的に何を意味するでしょう？</h4>
+                            <h4 data-key="quiz_question" class="text-xl font-bold mb-6">
+                                【問題】<br>ベトナムの伝統的なサンドイッチ「バインミー」。この「バイン」とは、ベトナム語で一般的に何を意味するでしょう？</h4>
                             <div class="space-y-4 text-left">
-                                <label class="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-100 transition">
-                                    <input type="radio" name="quiz_answer" value="1" class="mr-4 text-green-600 focus:ring-green-500">
+                                <label
+                                    class="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-100 transition">
+                                    <input type="radio" name="quiz_answer" value="1"
+                                        class="mr-4 text-green-600 focus:ring-green-500">
                                     <span data-key="quiz_ans_1" class="text-lg">1. 肉</span>
                                 </label>
-                                <label class="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-100 transition">
-                                    <input type="radio" name="quiz_answer" value="2" class="mr-4 text-green-600 focus:ring-green-500">
+                                <label
+                                    class="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-100 transition">
+                                    <input type="radio" name="quiz_answer" value="2"
+                                        class="mr-4 text-green-600 focus:ring-green-500">
                                     <span data-key="quiz_ans_2" class="text-lg">2. パン（または小麦粉を使った生地）</span>
                                 </label>
-                                <label class="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-100 transition">
-                                    <input type="radio" name="quiz_answer" value="3" class="mr-4 text-green-600 focus:ring-green-500">
+                                <label
+                                    class="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-100 transition">
+                                    <input type="radio" name="quiz_answer" value="3"
+                                        class="mr-4 text-green-600 focus:ring-green-500">
                                     <span data-key="quiz_ans_3" class="text-lg">3. 野菜</span>
                                 </label>
                             </div>
                             <div class="mt-4 admin-only-item">
                                 <label class="text-sm font-bold text-gray-600">正解の番号 (管理者用):</label>
-                                <input type="text" data-key="quiz_correct_ans" class="w-24 text-center border border-gray-300 rounded px-2 py-1 shadow-sm focus:border-orange-400 focus:ring focus:ring-orange-200 focus:ring-opacity-50" style="vertical-align: middle;">
+                                <input type="text" data-key="quiz_correct_ans"
+                                    class="w-24 text-center border border-gray-300 rounded px-2 py-1 shadow-sm focus:border-orange-400 focus:ring focus:ring-orange-200 focus:ring-opacity-50"
+                                    style="vertical-align: middle;">
                             </div>
-                            <button type="submit" id="quiz-submit" class="mt-8 w-full bg-green-600 text-white font-bold py-3 px-8 rounded-full hover:bg-green-700 transition-colors text-lg">回答する</button>
+                            <button type="submit" id="quiz-submit"
+                                class="mt-8 w-full bg-green-600 text-white font-bold py-3 px-8 rounded-full hover:bg-green-700 transition-colors text-lg">回答する</button>
                         </form>
                         <p id="quiz-result" class="mt-6 text-xl font-bold h-6"></p>
                     </div>
@@ -197,18 +242,21 @@
                     <h3 class="text-2xl font-bold font-display mb-4">店舗情報</h3>
                     <p class="text-lg">【場所】 新潟経営大学 中央広場 テントNo.15</p>
                     <p class="text-lg">【日時】 11月1日(土)・2日(日) 10:00〜17:00</p>
-                    <p class="text-lg font-bold mt-4 bg-white text-orange-700 rounded-full py-2 px-6 inline-block hidden">
+                    <p
+                        class="text-lg font-bold mt-4 bg-white text-orange-700 rounded-full py-2 px-6 inline-block hidden">
                         ✨ オープンキャンパスチケット利用可能店舗です ✨
                     </p>
                     <p class="mt-4">皆様のお越しを心よりお待ちしております！</p>
                 </div>
             </section>
-             <section class="py-16 bg-gray-50">
+            <section class="py-16 bg-gray-50">
                 <div class="container mx-auto px-6 text-center">
                     <h3 class="text-2xl font-bold font-display mb-4 text-gray-800">最新情報はこちらをチェック！</h3>
                     <p class="text-gray-600 mb-8">公式インスタグラムで、準備の様子や当日のメニューを更新中です！</p>
-                    <a href="https://www.instagram.com/iron.duckie/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center bg-gradient-to-r from-pink-500 to-orange-500 text-white font-bold py-3 px-8 rounded-full hover:shadow-lg transition-all transform hover:scale-105">
-                        <svg class="w-6 h-6 mr-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <a href="https://www.instagram.com/iron.duckie/" target="_blank" rel="noopener noreferrer"
+                        class="inline-flex items-center bg-gradient-to-r from-pink-500 to-orange-500 text-white font-bold py-3 px-8 rounded-full hover:shadow-lg transition-all transform hover:scale-105">
+                        <svg class="w-6 h-6 mr-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
                             <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
                             <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
                             <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
@@ -217,17 +265,14 @@
                     </a>
                 </div>
             </section>
-            
+
             <section class="py-16 bg-white">
                 <div class="container mx-auto px-6">
                     <h3 class="text-3xl font-bold font-display text-center text-gray-800 mb-8">アクセスマップ</h3>
                     <div class="aspect-w-16 aspect-h-9 rounded-lg shadow-2xl overflow-hidden border-4 border-white">
                         <iframe
                             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3178.68652156801!2d139.0531513156221!3d37.65651797978083!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x5ff4c9971033b0c3%3A0x6b97609a69620818!2sNiigata%20University%20of%20Management!5e0!3m2!1sja!2sjp!4v1678888888888!5m2!1sja!2sjp"
-                            class="w-full h-96"
-                            style="border:0;"
-                            allowfullscreen=""
-                            loading="lazy"
+                            class="w-full h-96" style="border:0;" allowfullscreen="" loading="lazy"
                             referrerpolicy="no-referrer-when-downgrade">
                         </iframe>
                     </div>
@@ -245,18 +290,25 @@
 
     <div id="page-banh-mi" class="hidden">
         <header class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-40">
-            <div class="container mx-auto px-6 py-4"><h1 data-key="banhmi_name" class="text-2xl font-bold font-display text-orange-800">絶品 バインミー</h1></div>
+            <div class="container mx-auto px-6 py-4">
+                <h1 data-key="banhmi_name" class="text-2xl font-bold font-display text-orange-800">絶品 バインミー</h1>
+            </div>
         </header>
         <main class="container mx-auto px-6 py-12">
             <div class="max-w-4xl mx-auto">
-                <img data-key="banhmi_image" src="https://placehold.co/600x400/FFF8F0/CCC?text=Loading..." alt="バインミーの写真" class="rounded-lg shadow-lg w-full h-auto object-cover mb-8">
-                 <input type="text" class="admin-image-input" data-target="banhmi_image" placeholder="新しい画像URLを入力...">
+                <img data-key="banhmi_image" src="https://placehold.co/600x400/FFF8F0/CCC?text=Loading..."
+                    alt="バインミーの写真" class="rounded-lg shadow-lg w-full h-auto object-cover mb-8">
+                <input type="text" class="admin-image-input" data-target="banhmi_image" placeholder="新しい画像URLを入力...">
                 <div class="bg-white p-8 rounded-lg shadow-lg">
                     <h2 class="text-2xl font-bold mb-4">商品の説明</h2>
-                    <p data-key="banhmi_long_desc" class="text-base leading-relaxed mb-8">バインミーは、ベトナムのサンドイッチです。フランスパンに、自家製のチャーシュー、レバーパテ、紅白なます、きゅうり、そしてたっぷりのパクチーを挟みました。外はサクサク、中はふんわりとしたパンの食感と、具材の豊かな風味が一体となった、満足感のある一品です。</p>
+                    <p data-key="banhmi_long_desc" class="text-base leading-relaxed mb-8">
+                        バインミーは、ベトナムのサンドイッチです。フランスパンに、自家製のチャーシュー、レバーパテ、紅白なます、きゅうり、そしてたっぷりのパクチーを挟みました。外はサクサク、中はふんわりとしたパンの食感と、具材の豊かな風味が一体となった、満足感のある一品です。
+                    </p>
                     <h2 class="text-2xl font-bold mb-4 text-red-600">アレルギー情報</h2>
                     <p data-key="banhmi_allergy" class="mb-4">この商品には、以下の特定原材料等が含まれている可能性があります。</p>
-                    <div class="text-center mt-12"><a href="#" onclick="showPage('page-main'); return false;" class="inline-block bg-orange-600 text-white font-bold py-3 px-8 rounded-full hover:bg-orange-700 transition-colors">メインページに戻る</a></div>
+                    <div class="text-center mt-12"><a href="#" onclick="showPage('page-main'); return false;"
+                            class="inline-block bg-orange-600 text-white font-bold py-3 px-8 rounded-full hover:bg-orange-700 transition-colors">メインページに戻る</a>
+                    </div>
                 </div>
             </div>
         </main>
@@ -264,18 +316,25 @@
 
     <div id="page-goi-cuon" class="hidden">
         <header class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-40">
-            <div class="container mx-auto px-6 py-4"><h1 data-key="goicuon_name" class="text-2xl font-bold font-display text-green-800">新鮮 生春巻き</h1></div>
+            <div class="container mx-auto px-6 py-4">
+                <h1 data-key="goicuon_name" class="text-2xl font-bold font-display text-green-800">新鮮 生春巻き</h1>
+            </div>
         </header>
         <main class="container mx-auto px-6 py-12">
-             <div class="max-w-4xl mx-auto">
-                <img data-key="goicuon_image" src="https://placehold.co/600x400/FFF8F0/CCC?text=Loading..." alt="生春巻きの写真" class="rounded-lg shadow-lg w-full h-auto object-cover mb-8">
-                 <input type="text" class="admin-image-input" data-target="goicuon_image" placeholder="新しい画像URLを入力...">
+            <div class="max-w-4xl mx-auto">
+                <img data-key="goicuon_image" src="https://placehold.co/600x400/FFF8F0/CCC?text=Loading..."
+                    alt="生春巻きの写真" class="rounded-lg shadow-lg w-full h-auto object-cover mb-8">
+                <input type="text" class="admin-image-input" data-target="goicuon_image" placeholder="新しい画像URLを入力...">
                 <div class="bg-white p-8 rounded-lg shadow-lg">
                     <h2 class="text-2xl font-bold mb-4">商品の説明</h2>
-                    <p data-key="goicuon_long_desc" class="text-base leading-relaxed mb-8">ライスペーパーで、新鮮なエビ、ビーフン、サニーレタス、きゅうり、大葉などをたっぷりと巻いたヘルシーな一品です。野菜のシャキシャキ感とエビのぷりぷり食感が楽しめます。濃厚なピーナッツ味噌だれ、またはさっぱりとしたヌクチャム（甘酢だれ）をお選びいただけます。</p>
+                    <p data-key="goicuon_long_desc" class="text-base leading-relaxed mb-8">
+                        ライスペーパーで、新鮮なエビ、ビーフン、サニーレタス、きゅうり、大葉などをたっぷりと巻いたヘルシーな一品です。野菜のシャキシャキ感とエビのぷりぷり食感が楽しめます。濃厚なピーナッツ味噌だれ、またはさっぱりとしたヌクチャム（甘酢だれ）をお選びいただけます。
+                    </p>
                     <h2 class="text-2xl font-bold mb-4 text-red-600">アレルギー情報</h2>
                     <p data-key="goicuon_allergy" class="mb-4">この商品には、以下の特定原材料等が含まれている可能性があります。</p>
-                    <div class="text-center mt-12"><a href="#" onclick="showPage('page-main'); return false;" class="inline-block bg-green-600 text-white font-bold py-3 px-8 rounded-full hover:bg-green-700 transition-colors">メインページに戻る</a></div>
+                    <div class="text-center mt-12"><a href="#" onclick="showPage('page-main'); return false;"
+                            class="inline-block bg-green-600 text-white font-bold py-3 px-8 rounded-full hover:bg-green-700 transition-colors">メインページに戻る</a>
+                    </div>
                 </div>
             </div>
         </main>
@@ -283,25 +342,33 @@
 
     <div id="page-che" class="hidden">
         <header class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-40">
-            <div class="container mx-auto px-6 py-4"><h1 data-key="che_name" class="text-2xl font-bold font-display text-pink-700">彩り チェー</h1></div>
+            <div class="container mx-auto px-6 py-4">
+                <h1 data-key="che_name" class="text-2xl font-bold font-display text-pink-700">彩り チェー</h1>
+            </div>
         </header>
         <main class="container mx-auto px-6 py-12">
             <div class="max-w-4xl mx-auto">
-                <img data-key="che_image" src="https://placehold.co/600x400/FFF8F0/CCC?text=Loading..." alt="チェーの写真" class="rounded-lg shadow-lg w-full h-auto object-cover mb-8">
-                 <input type="text" class="admin-image-input" data-target="che_image" placeholder="新しい画像URLを入力...">
+                <img data-key="che_image" src="https://placehold.co/600x400/FFF8F0/CCC?text=Loading..." alt="チェーの写真"
+                    class="rounded-lg shadow-lg w-full h-auto object-cover mb-8">
+                <input type="text" class="admin-image-input" data-target="che_image" placeholder="新しい画像URLを入力...">
                 <div class="bg-white p-8 rounded-lg shadow-lg">
                     <h2 class="text-2xl font-bold mb-4">商品の説明</h2>
-                    <p data-key="che_long_desc" class="text-base leading-relaxed mb-8">ベトナムの伝統的なスイーツ「チェー」。ココナッツミルクをベースに、タピオカ、小豆、緑豆、フルーツ、そして色とりどりのゼリーを加えました。優しい甘さと、様々な具材の食感が楽しい、ひんやり冷たいデザートです。よくかき混ぜてお召し上がりください。</p>
+                    <p data-key="che_long_desc" class="text-base leading-relaxed mb-8">
+                        ベトナムの伝統的なスイーツ「チェー」。ココナッツミルクをベースに、タピオカ、小豆、緑豆、フルーツ、そして色とりどりのゼリーを加えました。優しい甘さと、様々な具材の食感が楽しい、ひんやり冷たいデザートです。よくかき混ぜてお召し上がりください。
+                    </p>
                     <h2 class="text-2xl font-bold mb-4 text-red-600">アレルギー情報</h2>
                     <p data-key="che_allergy" class="mb-4">この商品には、以下の特定原材料等が含まれている可能性があります。</p>
-                    <div class="text-center mt-12"><a href="#" onclick="showPage('page-main'); return false;" class="inline-block bg-pink-600 text-white font-bold py-3 px-8 rounded-full hover:bg-pink-700 transition-colors">メインページに戻る</a></div>
+                    <div class="text-center mt-12"><a href="#" onclick="showPage('page-main'); return false;"
+                            class="inline-block bg-pink-600 text-white font-bold py-3 px-8 rounded-full hover:bg-pink-700 transition-colors">メインページに戻る</a>
+                    </div>
                 </div>
             </div>
         </main>
     </div>
-    
+
     <div class="fixed bottom-4 right-4 z-50">
-        <label for="admin-switch" class="flex items-center cursor-pointer bg-white/80 backdrop-blur-md p-2 rounded-lg shadow-lg">
+        <label for="admin-switch"
+            class="flex items-center cursor-pointer bg-white/80 backdrop-blur-md p-2 rounded-lg shadow-lg">
             <span class="mr-2 text-sm font-bold text-gray-700">管理者モード</span>
             <div class="relative">
                 <input type="checkbox" id="admin-switch" class="sr-only peer">
@@ -317,26 +384,38 @@
             <input type="password" id="password-input" class="border rounded w-full p-2 mb-2">
             <p id="password-error" class="text-red-500 text-sm mb-4 h-5"> </p>
             <div class="flex justify-end space-x-2">
-                <button id="password-cancel" class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400 transition-colors">キャンセル</button>
-                <button id="password-submit" class="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition-colors">認証</button>
+                <button id="password-cancel"
+                    class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400 transition-colors">キャンセル</button>
+                <button id="password-submit"
+                    class="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition-colors">認証</button>
             </div>
         </div>
     </div>
 
     <div id="coupon-modal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-        <div class="bg-white p-6 md:p-10 rounded-2xl shadow-xl w-full max-w-md text-center border-4 border-dashed border-orange-400 relative">
-            <svg class="w-16 h-16 text-orange-500 mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-1.5h5.25m-5.25 0h3m-3 0h-3m-2.25-3h10.5m-10.5 0h3m-3 0h-3m2.25 0h10.5m-10.5 0h3m-3 0h-3m2.25 0h10.5m-10.5 0h3m-3 0h-3" />
-              <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 6a.75.75 0 00-1.5 0v1.5a.75.75 0 001.5 0V6z" />
-              <path stroke-linecap="round" stroke-linejoin="round" d="M18 18H6a2.25 2.25 0 01-2.25-2.25V8.25A2.25 2.25 0 016 6h12a2.25 2.25 0 012.25 2.25v7.5A2.25 2.25 0 0118 18z" />
+        <div
+            class="bg-white p-6 md:p-10 rounded-2xl shadow-xl w-full max-w-md text-center border-4 border-dashed border-orange-400 relative">
+            <svg class="w-16 h-16 text-orange-500 mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" fill="none"
+                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-1.5h5.25m-5.25 0h3m-3 0h-3m-2.25-3h10.5m-10.5 0h3m-3 0h-3m2.25 0h10.5m-10.5 0h3m-3 0h-3m2.25 0h10.5m-10.5 0h3m-3 0h-3" />
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M16.5 6a.75.75 0 00-1.5 0v1.5a.75.75 0 001.5 0V6z" />
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M18 18H6a2.25 2.25 0 01-2.25-2.25V8.25A2.25 2.25 0 016 6h12a2.25 2.25 0 012.25 2.25v7.5A2.25 2.25 0 0118 18z" />
             </svg>
             <h3 class="text-2xl font-bold text-green-700 mb-2">クイズ正解！</h3>
             <h2 class="text-5xl md:text-6xl font-bold font-display text-orange-600 mb-4">100円割引</h2>
             <p class="text-gray-700 text-lg mb-6">お会計時に、この画面を<br>スタッフにご提示ください。</p>
             <p class="text-sm text-gray-500 mb-8">※他の割引との併用はできません。<br>※学園祭期間中のみ有効です。</p>
-            <button id="coupon-close" class="w-full bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition-colors font-bold text-lg">閉じる</button>
+            <button id="coupon-close"
+                class="w-full bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition-colors font-bold text-lg">閉じる</button>
             <button id="coupon-print-close" class="absolute top-2 right-2 text-gray-400 hover:text-gray-600">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                </svg>
             </button>
         </div>
     </div>
@@ -374,21 +453,33 @@
 
             // Firebaseの初期化と設定
             let db, auth, contentRef;
-            
+
             // ★ 変更点: サイト全体のデータを保持する変数を追加
             let siteData = {};
-            
+
+            // Canvas環境から設定を読み込む
             // Canvas環境から設定を読み込む
             const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
             const firebaseConfig = (typeof __firebase_config !== 'undefined') ? JSON.parse(__firebase_config) : null;
 
+            // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+            // ★★★ この2行を `if` の前に移動します ★★★
+            // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+            setupAdminModeListeners();
+            setupQuizListeners();
+
             if (!firebaseConfig) {
                 console.error("Firebase config is not available.");
+                // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+                // ★★★ ここの `return;` は削除しないでください ★★★
+                // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
                 return; // Firebaseが設定されていない場合は何もしない
             }
-            
+
             try {
                 const app = initializeApp(firebaseConfig);
+                // ... (以下、Firebase関連のコードが続く)
+
                 db = getFirestore(app);
                 auth = getAuth(app);
                 // setLogLevel('debug'); // デバッグログ
@@ -402,7 +493,7 @@
                 } else {
                     await signInAnonymously(auth);
                 }
-                
+
                 // console.log("Firebase initialized and user signed in:", auth.currentUser?.uid);
 
                 // 1. Firestoreからコンテンツを読み込み、リアルタイムでリッスンする
@@ -437,7 +528,7 @@
                     console.error("Error listening to content:", error);
                 });
             }
-            
+
             // DOMをデータで更新する
             function updateDOM(data) {
                 editableElements.forEach(el => {
@@ -468,7 +559,7 @@
                     // ★ 変更点: クイズの正解番号
                     "quiz_correct_ans": "2"
                 };
-                
+
                 editableElements.forEach(el => {
                     const key = el.dataset.key;
                     if (el.tagName === 'IMG') {
@@ -479,7 +570,7 @@
                         defaultContent[key] = el.textContent.trim();
                     }
                 });
-                
+
                 try {
                     // ドキュメントが既に存在するか確認 (onSnapshotが先に実行されるため、ここではsetDocのみ)
                     await setDoc(contentRef, defaultContent);
@@ -502,7 +593,7 @@
                     console.error("Error saving content:", error);
                 }
             }
-            
+
             // 3. 管理者モードの状態を切り替える
             function toggleAdminMode(isAdmin) {
                 if (isAdmin) {
@@ -577,7 +668,7 @@
                         passwordModal.classList.add('hidden');
                         passwordInput.value = '';
                         passwordError.textContent = ' ';
-                        
+
                         adminSwitch.checked = true;
                         toggleAdminMode(true);
                     } else {
@@ -586,7 +677,7 @@
                         passwordInput.focus();
                     }
                 };
-                
+
                 passwordSubmit.addEventListener('click', handlePasswordSubmit);
                 passwordInput.addEventListener('keydown', (e) => {
                     if (e.key === 'Enter') handlePasswordSubmit();
@@ -603,9 +694,9 @@
                 const savedAdminState = localStorage.getItem('adminMode') === 'true';
                 adminSwitch.checked = savedAdminState;
                 toggleAdminMode(savedAdminState);
-                
+
                 // クイズ正解入力欄の初期読み取り専用状態を設定
-                 document.querySelector('[data-key="quiz_correct_ans"]').readOnly = !savedAdminState;
+                document.querySelector('[data-key="quiz_correct_ans"]').readOnly = !savedAdminState;
             }
 
             // 5. クイズ機能のリスナーを設定
@@ -616,7 +707,7 @@
                 const couponModal = document.getElementById('coupon-modal');
                 const couponClose = document.getElementById('coupon-close');
                 const couponPrintClose = document.getElementById('coupon-print-close');
-                
+
                 // ★ 変更点: 正解を siteData から取得
                 // const correctAnswer = "2"; // 2. パン
 
@@ -635,7 +726,7 @@
                     if (selectedAnswer === correctAnswer) {
                         quizResult.textContent = '🎉 正解です！割引券を表示します！ 🎉';
                         quizResult.classList.add('quiz-correct');
-                        
+
                         // 割引券モーダルを表示
                         setTimeout(() => {
                             couponModal.classList.remove('hidden');
@@ -660,4 +751,5 @@
         });
     </script>
 </body>
+
 </html>
