@@ -71,7 +71,8 @@
             background-color: #fff7ed;
         }
 
-        #admin-switch:checked~.dot, #ticket-banner-switch:checked~.dot {
+        #admin-switch:checked~.dot,
+        #ticket-banner-switch:checked~.dot {
             transform: translateX(100%);
             background-color: #fb923c;
         }
@@ -83,30 +84,42 @@
         .quiz-incorrect {
             color: #dc2626;
         }
+
         /* 番号と削除ボタンのスタイル */
         .pickup-number-item {
             display: inline-flex;
             align-items: center;
-            background-color: #e0e7ff; /* bg-indigo-100 */
-            border-radius: 9999px; /* rounded-full */
+            background-color: #e0e7ff;
+            /* bg-indigo-100 */
+            border-radius: 9999px;
+            /* rounded-full */
             padding: 4px 12px;
             margin: 4px;
-            font-size: 1.5rem; /* text-2xl */
-            font-weight: 700; /* font-bold */
+            font-size: 1.5rem;
+            /* text-2xl */
+            font-weight: 700;
+            /* font-bold */
         }
+
         .delete-number-btn {
-            display: none; /* 通常時は非表示 */
+            display: none;
+            /* 通常時は非表示 */
             margin-left: 8px;
-            color: #ef4444; /* text-red-500 */
+            color: #ef4444;
+            /* text-red-500 */
             cursor: pointer;
             font-weight: bold;
             line-height: 1;
         }
+
         .admin-mode .delete-number-btn {
-            display: inline; /* 管理者モードで表示 */
+            display: inline;
+            /* 管理者モードで表示 */
         }
+
         .delete-number-btn:hover {
-            color: #b91c1c; /* text-red-700 */
+            color: #b91c1c;
+            /* text-red-700 */
         }
     </style>
 </head>
@@ -136,12 +149,17 @@
 
             <section class="bg-blue-100 text-blue-800 py-4 text-center font-bold shadow-md">
                 <h3 class="text-xl mb-2">引き渡し可能な注文番号</h3>
-                <div id="pickup-numbers-container" class="font-mono tracking-widest flex flex-wrap justify-center items-center px-4" style="min-height: 3rem;">
-                    </div>
+                <div id="pickup-numbers-container"
+                    class="font-mono tracking-widest flex flex-wrap justify-center items-center px-4"
+                    style="min-height: 3rem;">
+                </div>
                 <div class="admin-only-item mt-4">
-                    <input type="tel" id="pickup-number-input" class="border rounded px-2 py-1" placeholder="番号を追加..." pattern="[0-9]*">
-                    <button id="add-pickup-number" class="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600">追加</button>
-                    <button id="clear-pickup-numbers" class="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600">全てクリア</button>
+                    <input type="tel" id="pickup-number-input" class="border rounded px-2 py-1" placeholder="番号を追加..."
+                        pattern="[0-9]*">
+                    <button id="add-pickup-number"
+                        class="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600">追加</button>
+                    <button id="clear-pickup-numbers"
+                        class="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600">全てクリア</button>
                 </div>
             </section>
 
@@ -150,12 +168,13 @@
                     ✨ オープンキャンパスチケット利用可能店舗です ✨
                 </p>
                 <div class="admin-only-item mt-2">
-                     <label for="ticket-banner-switch" class="flex items-center justify-center cursor-pointer">
+                    <label for="ticket-banner-switch" class="flex items-center justify-center cursor-pointer">
                         <span class="mr-2 text-sm font-bold text-gray-700">チケット表示</span>
                         <div class="relative">
                             <input type="checkbox" id="ticket-banner-switch" class="sr-only peer">
                             <div class="block bg-gray-600 w-10 h-6 rounded-full peer-checked:bg-orange-300"></div>
-                            <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform"></div>
+                            <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform">
+                            </div>
                         </div>
                     </label>
                 </div>
@@ -275,7 +294,8 @@
                     <h3 class="text-2xl font-bold font-display mb-4">店舗情報</h3>
                     <p class="text-lg">【場所】 新潟経営大学 中央広場 テントNo.15</p>
                     <p class="text-lg">【日時】 11月1日(土)・2日(日) 10:00〜17:00</p>
-                    <p class="text-lg font-bold mt-4 bg-white text-orange-700 rounded-full py-2 px-6 inline-block ticket-banner">
+                    <p
+                        class="text-lg font-bold mt-4 bg-white text-orange-700 rounded-full py-2 px-6 inline-block ticket-banner">
                         ✨ オープンキャンパスチケット利用可能店舗です ✨
                     </p>
                     <p class="mt-4">皆様のお越しを心よりお待ちしております！</p>
@@ -560,11 +580,11 @@
                         }
                     }
                 });
-            
+
                 // 引き渡し番号の表示を更新
                 const container = document.getElementById('pickup-numbers-container');
-                container.innerHTML = ''; 
-            
+                container.innerHTML = '';
+
                 const numbersString = data.pickup_numbers || '';
                 const numbers = numbersString.split(', ').filter(n => n.trim() !== '');
 
@@ -573,14 +593,14 @@
                         const numEl = document.createElement('span');
                         numEl.className = 'pickup-number-item';
                         numEl.textContent = num;
-            
+
                         const deleteBtn = document.createElement('span');
                         deleteBtn.className = 'delete-number-btn';
                         deleteBtn.textContent = '×';
                         deleteBtn.dataset.number = num;
                         deleteBtn.title = `番号 ${num} を削除`;
                         numEl.appendChild(deleteBtn);
-            
+
                         container.appendChild(numEl);
                     });
                 } else {
@@ -589,7 +609,7 @@
                     placeholder.textContent = '現在ありません';
                     container.appendChild(placeholder);
                 }
-            
+
                 // チケットバナーの表示/非表示
                 const showBanner = data.show_ticket_banner !== false; // デフォルトは表示
                 document.querySelectorAll('.ticket-banner').forEach(banner => {
@@ -626,7 +646,7 @@
                     console.error("Error saving content:", error);
                 }
             }
-            
+
             async function saveContentBatch(data) {
                 if (!contentRef || !auth.currentUser) return;
                 try {
@@ -687,7 +707,7 @@
                         toggleAdminMode(false);
                     }
                 });
-                
+
                 const handlePasswordSubmit = () => {
                     if (passwordInput.value === '0003') {
                         passwordModal.classList.add('hidden');
@@ -740,7 +760,7 @@
                 couponClose.addEventListener('click', closeCouponModal);
                 couponPrintClose.addEventListener('click', closeCouponModal);
             }
-            
+
             function setupPickupNumberListeners() {
                 const pickupNumberInput = document.getElementById('pickup-number-input');
                 const addPickupNumberBtn = document.getElementById('add-pickup-number');
@@ -756,7 +776,7 @@
                     if (newNumber) {
                         const currentNumbersStr = siteData.pickup_numbers || '';
                         let numbers = currentNumbersStr.split(', ').filter(n => n.trim() !== '');
-                        
+
                         if (!numbers.includes(newNumber)) {
                             numbers.push(newNumber);
                             numbers.sort((a, b) => parseInt(a, 10) - parseInt(b, 10));
