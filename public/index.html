@@ -71,7 +71,7 @@
             background-color: #fff7ed;
         }
 
-        #admin-switch:checked~.dot {
+        #admin-switch:checked~.dot, #ticket-banner-switch:checked~.dot {
             transform: translateX(100%);
             background-color: #fb923c;
         }
@@ -145,7 +145,7 @@
                 </div>
             </section>
 
-            <section class="bg-white text-orange-700 py-3 text-center font-bold shadow-md">
+            <section class="bg-white text-orange-700 py-3 text-center font-bold shadow-md ticket-banner">
                 <p class="text-lg">
                     ✨ オープンキャンパスチケット利用可能店舗です ✨
                 </p>
@@ -265,8 +265,7 @@
                     <h3 class="text-2xl font-bold font-display mb-4">店舗情報</h3>
                     <p class="text-lg">【場所】 新潟経営大学 中央広場 テントNo.15</p>
                     <p class="text-lg">【日時】 11月1日(土)・2日(日) 10:00〜17:00</p>
-                    <p
-                        class="text-lg font-bold mt-4 bg-white text-orange-700 rounded-full py-2 px-6 inline-block hidden">
+                    <p class="text-lg font-bold mt-4 bg-white text-orange-700 rounded-full py-2 px-6 inline-block ticket-banner">
                         ✨ オープンキャンパスチケット利用可能店舗です ✨
                     </p>
                     <p class="mt-4">皆様のお越しを心よりお待ちしております！</p>
@@ -389,7 +388,15 @@
         </main>
     </div>
 
-    <div class="fixed bottom-4 right-4 z-50">
+    <div class="fixed bottom-4 right-4 z-50 space-y-2">
+        <label for="ticket-banner-switch" class="flex items-center cursor-pointer bg-white/80 backdrop-blur-md p-2 rounded-lg shadow-lg admin-only-item">
+            <span class="mr-2 text-sm font-bold text-gray-700">チケット表示</span>
+            <div class="relative">
+                <input type="checkbox" id="ticket-banner-switch" class="sr-only peer">
+                <div class="block bg-gray-600 w-10 h-6 rounded-full peer-checked:bg-orange-300"></div>
+                <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform"></div>
+            </div>
+        </label>
         <label for="admin-switch"
             class="flex items-center cursor-pointer bg-white/80 backdrop-blur-md p-2 rounded-lg shadow-lg">
             <span class="mr-2 text-sm font-bold text-gray-700">管理者モード</span>
@@ -484,6 +491,7 @@
             const passwordSubmit = document.getElementById('password-submit');
             const passwordCancel = document.getElementById('password-cancel');
             const passwordError = document.getElementById('password-error');
+            const ticketBannerSwitch = document.getElementById('ticket-banner-switch');
 
             // Firebase関連の変数を宣言
             let db, auth, contentRef;
@@ -493,6 +501,7 @@
             setupAdminModeListeners();
             setupQuizListeners();
             setupPickupNumberListeners();
+            setupTicketBannerListener();
 
             // Firebaseの初期化処理
             try {
@@ -579,6 +588,13 @@
                     container.appendChild(placeholder);
                 }
             
+                // チケットバナーの表示/非表示
+                const showBanner = data.show_ticket_banner !== false; // デフォルトは表示
+                document.querySelectorAll('.ticket-banner').forEach(banner => {
+                    banner.classList.toggle('hidden', !showBanner);
+                });
+                ticketBannerSwitch.checked = showBanner;
+
                 // ヒーロー画像の更新
                 const hero = document.getElementById('hero-section');
                 if (data['hero_image'] && hero) {
@@ -588,7 +604,9 @@
 
 
             async function initializeDefaultContent() {
-                const defaultContent = {};
+                const defaultContent = {
+                    show_ticket_banner: true // 初期値
+                };
                 editableElements.forEach(el => {
                     const key = el.dataset.key;
                     if (el.tagName === 'IMG') defaultContent[key] = el.src;
@@ -739,7 +757,7 @@
                         
                         if (!numbers.includes(newNumber)) {
                             numbers.push(newNumber);
-                            numbers.sort((a, b) => parseInt(a, 10) - parseInt(b, 10)); // 数値としてソート
+                            numbers.sort((a, b) => parseInt(a, 10) - parseInt(b, 10));
                             saveContent('pickup_numbers', numbers.join(', '));
                         }
                         pickupNumberInput.value = '';
@@ -758,6 +776,12 @@
                         numbers = numbers.filter(n => n !== numberToDelete);
                         saveContent('pickup_numbers', numbers.join(', '));
                     }
+                });
+            }
+
+            function setupTicketBannerListener() {
+                ticketBannerSwitch.addEventListener('change', () => {
+                    saveContent('show_ticket_banner', ticketBannerSwitch.checked);
                 });
             }
         });
