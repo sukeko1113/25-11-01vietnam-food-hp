@@ -44,17 +44,12 @@
             background-color: #ffedd5;
         }
 
-        .admin-image-input {
+        .admin-image-upload-wrapper {
             display: none;
-            width: 100%;
             margin-top: 8px;
-            padding: 4px 8px;
-            border: 1px solid #fdba74;
-            border-radius: 4px;
-            font-size: 14px;
         }
 
-        .admin-mode .admin-image-input {
+        .admin-mode .admin-image-upload-wrapper {
             display: block;
         }
 
@@ -66,12 +61,19 @@
             display: block;
         }
 
+        .upload-status {
+            font-size: 12px;
+            margin-left: 8px;
+            font-weight: bold;
+        }
+
         .admin-mode input[data-key="quiz_correct_ans"]:not(:read-only) {
             outline: 2px dashed #fb923c;
             background-color: #fff7ed;
         }
 
-        #admin-switch:checked~.dot, #ticket-banner-switch:checked~.dot {
+        #admin-switch:checked~.dot,
+        #ticket-banner-switch:checked~.dot {
             transform: translateX(100%);
             background-color: #fb923c;
         }
@@ -83,30 +85,42 @@
         .quiz-incorrect {
             color: #dc2626;
         }
+
         /* 番号と削除ボタンのスタイル */
         .pickup-number-item {
             display: inline-flex;
             align-items: center;
-            background-color: #e0e7ff; /* bg-indigo-100 */
-            border-radius: 9999px; /* rounded-full */
+            background-color: #e0e7ff;
+            /* bg-indigo-100 */
+            border-radius: 9999px;
+            /* rounded-full */
             padding: 4px 12px;
             margin: 4px;
-            font-size: 1.5rem; /* text-2xl */
-            font-weight: 700; /* font-bold */
+            font-size: 1.5rem;
+            /* text-2xl */
+            font-weight: 700;
+            /* font-bold */
         }
+
         .delete-number-btn {
-            display: none; /* 通常時は非表示 */
+            display: none;
+            /* 通常時は非表示 */
             margin-left: 8px;
-            color: #ef4444; /* text-red-500 */
+            color: #ef4444;
+            /* text-red-500 */
             cursor: pointer;
             font-weight: bold;
             line-height: 1;
         }
+
         .admin-mode .delete-number-btn {
-            display: inline; /* 管理者モードで表示 */
+            display: inline;
+            /* 管理者モードで表示 */
         }
+
         .delete-number-btn:hover {
-            color: #b91c1c; /* text-red-700 */
+            color: #b91c1c;
+            /* text-red-700 */
         }
     </style>
 </head>
@@ -122,8 +136,10 @@
                         alt="西村ゼミ ロゴ" class="h-8 mr-3">
                     <h1 class="text-2xl font-bold font-display text-orange-800">Nisimura Kitchen</h1>
                 </div>
-                <input type="text" class="admin-image-input" data-target="header_logo" placeholder="ロゴ画像URL..."
-                    style="width: 300px; margin-top: 8px;">
+                <div class="admin-image-upload-wrapper">
+                    <input type="file" class="admin-image-upload" data-target="header_logo" accept="image/*">
+                    <span class="upload-status" data-status-for="header_logo"></span>
+                </div>
                 <p class="text-sm text-orange-700 mt-1">学園祭で出会う、本格ベトナム。</p>
             </div>
         </header>
@@ -136,12 +152,17 @@
 
             <section class="bg-blue-100 text-blue-800 py-4 text-center font-bold shadow-md">
                 <h3 class="text-xl mb-2">引き渡し可能な注文番号</h3>
-                <div id="pickup-numbers-container" class="font-mono tracking-widest flex flex-wrap justify-center items-center px-4" style="min-height: 3rem;">
-                    </div>
+                <div id="pickup-numbers-container"
+                    class="font-mono tracking-widest flex flex-wrap justify-center items-center px-4"
+                    style="min-height: 3rem;">
+                </div>
                 <div class="admin-only-item mt-4">
-                    <input type="tel" id="pickup-number-input" class="border rounded px-2 py-1" placeholder="番号を追加..." pattern="[0-9]*">
-                    <button id="add-pickup-number" class="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600">追加</button>
-                    <button id="clear-pickup-numbers" class="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600">全てクリア</button>
+                    <input type="tel" id="pickup-number-input" class="border rounded px-2 py-1" placeholder="番号を追加..."
+                        pattern="[0-9]*">
+                    <button id="add-pickup-number"
+                        class="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600">追加</button>
+                    <button id="clear-pickup-numbers"
+                        class="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600">全てクリア</button>
                 </div>
             </section>
 
@@ -150,12 +171,13 @@
                     ✨ オープンキャンパスチケット利用可能店舗です ✨
                 </p>
                 <div class="admin-only-item mt-2">
-                     <label for="ticket-banner-switch" class="flex items-center justify-center cursor-pointer">
+                    <label for="ticket-banner-switch" class="flex items-center justify-center cursor-pointer">
                         <span class="mr-2 text-sm font-bold text-gray-700">チケット表示</span>
                         <div class="relative">
                             <input type="checkbox" id="ticket-banner-switch" class="sr-only peer">
                             <div class="block bg-gray-600 w-10 h-6 rounded-full peer-checked:bg-orange-300"></div>
-                            <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform"></div>
+                            <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform">
+                            </div>
                         </div>
                     </label>
                 </div>
@@ -168,8 +190,10 @@
                     <h3 class="text-3xl md:text-5xl font-bold font-display">ベトナムの味。</h3>
                     <p class="mt-4 text-lg">手作りの本格ベトナム料理で、最高の学園祭体験を。</p>
 
-                    <input type="text" class="admin-image-input" data-target="hero_image" placeholder="ヒーロー画像URLを入力..."
-                        style="position: absolute; bottom: 10px; left: 10px; width: calc(100% - 20px); background: rgba(255,255,255,0.9); color: #333;">
+                    <div class="admin-image-upload-wrapper absolute bottom-2 left-2 right-2">
+                        <input type="file" class="admin-image-upload" data-target="hero_image" accept="image/*">
+                        <span class="upload-status" data-status-for="hero_image"></span>
+                    </div>
                 </div>
             </section>
 
@@ -179,8 +203,11 @@
                         <div class="mb-6 md:mb-0">
                             <img data-key="banhmi_image" src="https://placehold.co/600x400/FFF8F0/CCC?text=Loading..."
                                 alt="バインミーの写真" class="rounded-lg shadow-2xl w-full h-auto object-cover">
-                            <input type="text" class="admin-image-input" data-target="banhmi_image"
-                                placeholder="新しい画像URLを入力...">
+                            <div class="admin-image-upload-wrapper">
+                                <input type="file" class="admin-image-upload" data-target="banhmi_image"
+                                    accept="image/*">
+                                <span class="upload-status" data-status-for="banhmi_image"></span>
+                            </div>
                         </div>
                         <div class="text-center md:text-left">
                             <h3 data-key="banhmi_name" class="text-3xl font-bold font-display text-orange-800">絶品 バインミー
@@ -205,16 +232,21 @@
                         <div class="mb-6 md:mb-0 md:order-1 mt-6 md:mt-0">
                             <img data-key="goicuon_image" src="https://placehold.co/600x400/FFF8F0/CCC?text=Loading..."
                                 alt="生春巻きの写真" class="rounded-lg shadow-2xl w-full h-auto object-cover">
-                            <input type="text" class="admin-image-input" data-target="goicuon_image"
-                                placeholder="新しい画像URLを入力...">
+                            <div class="admin-image-upload-wrapper">
+                                <input type="file" class="admin-image-upload" data-target="goicuon_image"
+                                    accept="image/*">
+                                <span class="upload-status" data-status-for="goicuon_image"></span>
+                            </div>
                         </div>
                     </div>
                     <div class="md:grid md:grid-cols-2 gap-12 items-center">
                         <div class="mb-6 md:mb-0">
                             <img data-key="che_image" src="https://placehold.co/600x400/FFF8F0/CCC?text=Loading..."
                                 alt="チェーの写真" class="rounded-lg shadow-2xl w-full h-auto object-cover">
-                            <input type="text" class="admin-image-input" data-target="che_image"
-                                placeholder="新しい画像URLを入力...">
+                            <div class="admin-image-upload-wrapper">
+                                <input type="file" class="admin-image-upload" data-target="che_image" accept="image/*">
+                                <span class="upload-status" data-status-for="che_image"></span>
+                            </div>
                         </div>
                         <div class="text-center md:text-left">
                             <h3 data-key="che_name" class="text-3xl font-bold font-display text-pink-700">彩り チェー</h3>
@@ -275,7 +307,8 @@
                     <h3 class="text-2xl font-bold font-display mb-4">店舗情報</h3>
                     <p class="text-lg">【場所】 新潟経営大学 中央広場 テントNo.15</p>
                     <p class="text-lg">【日時】 11月1日(土)・2日(日) 10:00〜17:00</p>
-                    <p class="text-lg font-bold mt-4 bg-white text-orange-700 rounded-full py-2 px-6 inline-block ticket-banner-content">
+                    <p
+                        class="text-lg font-bold mt-4 bg-white text-orange-700 rounded-full py-2 px-6 inline-block ticket-banner-content">
                         ✨ オープンキャンパスチケット利用可能店舗です ✨
                     </p>
                     <p class="mt-4">皆様のお越しを心よりお待ちしております！</p>
@@ -330,7 +363,10 @@
             <div class="max-w-4xl mx-auto">
                 <img data-key="banhmi_image" src="https://placehold.co/600x400/FFF8F0/CCC?text=Loading..."
                     alt="バインミーの写真" class="rounded-lg shadow-lg w-full h-auto object-cover mb-8">
-                <input type="text" class="admin-image-input" data-target="banhmi_image" placeholder="新しい画像URLを入力...">
+                <div class="admin-image-upload-wrapper">
+                    <input type="file" class="admin-image-upload" data-target="banhmi_image" accept="image/*">
+                    <span class="upload-status" data-status-for="banhmi_image"></span>
+                </div>
                 <div class="bg-white p-8 rounded-lg shadow-lg">
                     <h2 class="text-2xl font-bold mb-4">商品の説明</h2>
                     <p data-key="banhmi_long_desc" class="text-base leading-relaxed mb-8">
@@ -356,7 +392,10 @@
             <div class="max-w-4xl mx-auto">
                 <img data-key="goicuon_image" src="https://placehold.co/600x400/FFF8F0/CCC?text=Loading..."
                     alt="生春巻きの写真" class="rounded-lg shadow-lg w-full h-auto object-cover mb-8">
-                <input type="text" class="admin-image-input" data-target="goicuon_image" placeholder="新しい画像URLを入力...">
+                <div class="admin-image-upload-wrapper">
+                    <input type="file" class="admin-image-upload" data-target="goicuon_image" accept="image/*">
+                    <span class="upload-status" data-status-for="goicuon_image"></span>
+                </div>
                 <div class="bg-white p-8 rounded-lg shadow-lg">
                     <h2 class="text-2xl font-bold mb-4">商品の説明</h2>
                     <p data-key="goicuon_long_desc" class="text-base leading-relaxed mb-8">
@@ -382,7 +421,10 @@
             <div class="max-w-4xl mx-auto">
                 <img data-key="che_image" src="https://placehold.co/600x400/FFF8F0/CCC?text=Loading..." alt="チェーの写真"
                     class="rounded-lg shadow-lg w-full h-auto object-cover mb-8">
-                <input type="text" class="admin-image-input" data-target="che_image" placeholder="新しい画像URLを入力...">
+                <div class="admin-image-upload-wrapper">
+                    <input type="file" class="admin-image-upload" data-target="che_image" accept="image/*">
+                    <span class="upload-status" data-status-for="che_image"></span>
+                </div>
                 <div class="bg-white p-8 rounded-lg shadow-lg">
                     <h2 class="text-2xl font-bold mb-4">商品の説明</h2>
                     <p data-key="che_long_desc" class="text-base leading-relaxed mb-8">
@@ -457,6 +499,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 
         // Firebase設定
         const firebaseConfig = {
@@ -487,7 +530,7 @@
             const adminSwitch = document.getElementById('admin-switch');
             const body = document.body;
             const editableElements = document.querySelectorAll('[data-key]');
-            const imageInputs = document.querySelectorAll('.admin-image-input');
+            const imageUploadInputs = document.querySelectorAll('.admin-image-upload');
             const passwordModal = document.getElementById('password-modal');
             const passwordInput = document.getElementById('password-input');
             const passwordSubmit = document.getElementById('password-submit');
@@ -496,7 +539,7 @@
             const ticketBannerSwitch = document.getElementById('ticket-banner-switch');
 
             // Firebase関連の変数を宣言
-            let db, auth, contentRef;
+            let db, auth, storage, contentRef;
             let siteData = {};
 
             // UI関連のイベントリスナーを設定
@@ -514,6 +557,7 @@
                 const app = initializeApp(firebaseConfig);
                 db = getFirestore(app);
                 auth = getAuth(app);
+                storage = getStorage(app);
                 contentRef = doc(db, 'siteContent', 'content');
 
                 await signInAnonymously(auth);
@@ -560,11 +604,11 @@
                         }
                     }
                 });
-            
+
                 // 引き渡し番号の表示を更新
                 const container = document.getElementById('pickup-numbers-container');
-                container.innerHTML = ''; 
-            
+                container.innerHTML = '';
+
                 const numbersString = data.pickup_numbers || '';
                 const numbers = numbersString.split(', ').filter(n => n.trim() !== '');
 
@@ -573,14 +617,14 @@
                         const numEl = document.createElement('span');
                         numEl.className = 'pickup-number-item';
                         numEl.textContent = num;
-            
+
                         const deleteBtn = document.createElement('span');
                         deleteBtn.className = 'delete-number-btn';
                         deleteBtn.textContent = '×';
                         deleteBtn.dataset.number = num;
                         deleteBtn.title = `番号 ${num} を削除`;
                         numEl.appendChild(deleteBtn);
-            
+
                         container.appendChild(numEl);
                     });
                 } else {
@@ -589,7 +633,7 @@
                     placeholder.textContent = '現在ありません';
                     container.appendChild(placeholder);
                 }
-            
+
                 // チケットバナーの表示/非表示
                 const showBanner = data.show_ticket_banner !== false;
                 document.querySelectorAll('.ticket-banner-content').forEach(bannerContent => {
@@ -626,7 +670,7 @@
                     console.error("Error saving content:", error);
                 }
             }
-            
+
             async function saveContentBatch(data) {
                 if (!contentRef || !auth.currentUser) return;
                 try {
@@ -648,6 +692,14 @@
                 localStorage.setItem('adminMode', isAdmin);
             }
 
+            function setUploadStatus(targetKey, message, color) {
+                const statusEl = document.querySelector(`[data-status-for="${targetKey}"]`);
+                if (statusEl) {
+                    statusEl.textContent = message;
+                    statusEl.style.color = color;
+                }
+            }
+
             function setupAdminModeListeners() {
                 editableElements.forEach(el => {
                     if (el.tagName !== 'IMG') {
@@ -661,18 +713,39 @@
                     }
                 });
 
-                imageInputs.forEach(input => {
-                    input.addEventListener('change', (e) => {
-                        if (body.classList.contains('admin-mode')) {
-                            const newImageUrl = e.target.value;
-                            const targetKey = e.target.dataset.target;
-                            if (newImageUrl && targetKey) {
-                                document.querySelectorAll(`img[data-key="${targetKey}"]`).forEach(img => img.src = newImageUrl);
-                                if (targetKey === 'hero_image') {
-                                    document.getElementById('hero-section').style.backgroundImage = `url('${newImageUrl}')`;
-                                }
-                                saveContent(targetKey, newImageUrl);
+                imageUploadInputs.forEach(input => {
+                    input.addEventListener('change', async (e) => {
+                        if (!body.classList.contains('admin-mode')) return;
+
+                        const file = e.target.files[0];
+                        const targetKey = e.target.dataset.target;
+
+                        if (!file || !targetKey) return;
+
+                        setUploadStatus(targetKey, 'アップロード中...', '#fb923c');
+
+                        try {
+                            const uniqueFileName = `${targetKey}_${Date.now()}_${file.name}`;
+                            const storageRef = ref(storage, 'images/' + uniqueFileName);
+
+                            const snapshot = await uploadBytes(storageRef, file);
+                            const downloadURL = await getDownloadURL(snapshot.ref);
+
+                            // DOMを更新
+                            document.querySelectorAll(`img[data-key="${targetKey}"]`).forEach(img => img.src = downloadURL);
+                            if (targetKey === 'hero_image') {
+                                document.getElementById('hero-section').style.backgroundImage = `url('${downloadURL}')`;
                             }
+
+                            // Firestoreに保存
+                            await saveContent(targetKey, downloadURL);
+
+                            setUploadStatus(targetKey, '完了!', '#16a34a');
+                            setTimeout(() => setUploadStatus(targetKey, '', ''), 3000);
+
+                        } catch (error) {
+                            console.error("Upload failed:", error);
+                            setUploadStatus(targetKey, 'エラー', '#dc2626');
                         }
                     });
                 });
@@ -687,7 +760,7 @@
                         toggleAdminMode(false);
                     }
                 });
-                
+
                 const handlePasswordSubmit = () => {
                     if (passwordInput.value === '0003') {
                         passwordModal.classList.add('hidden');
@@ -740,7 +813,7 @@
                 couponClose.addEventListener('click', closeCouponModal);
                 couponPrintClose.addEventListener('click', closeCouponModal);
             }
-            
+
             function setupPickupNumberListeners() {
                 const pickupNumberInput = document.getElementById('pickup-number-input');
                 const addPickupNumberBtn = document.getElementById('add-pickup-number');
@@ -756,7 +829,7 @@
                     if (newNumber) {
                         const currentNumbersStr = siteData.pickup_numbers || '';
                         let numbers = currentNumbersStr.split(', ').filter(n => n.trim() !== '');
-                        
+
                         if (!numbers.includes(newNumber)) {
                             numbers.push(newNumber);
                             numbers.sort((a, b) => parseInt(a, 10) - parseInt(b, 10));

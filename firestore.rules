@@ -1,11 +1,12 @@
 rules_version = '2';
-
 service cloud.firestore {
   match /databases/{database}/documents {
-    // 誰でも読み書きを許可する (2025年11月23日まで)
-    // 注意: これは開発・デバッグ用の一時的な設定です。
-    match /{document=**} {
-      allow read, write: if request.time < timestamp.date(2025, 11, 23);
+    // siteContentコレクションに対するルール
+    match /siteContent/{document=**} {
+      // 誰でも読み取りは許可
+      allow read;
+      // 書き込みはログインしているユーザーのみ許可
+      allow write: if request.auth != null;
     }
   }
 }
