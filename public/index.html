@@ -83,6 +83,43 @@
         .quiz-incorrect {
             color: #dc2626;
         }
+
+        /* 番号と削除ボタンのスタイル */
+        .pickup-number-item {
+            display: inline-flex;
+            align-items: center;
+            background-color: #e0e7ff;
+            /* bg-indigo-100 */
+            border-radius: 9999px;
+            /* rounded-full */
+            padding: 4px 12px;
+            margin: 4px;
+            font-size: 1.5rem;
+            /* text-2xl */
+            font-weight: 700;
+            /* font-bold */
+        }
+
+        .delete-number-btn {
+            display: none;
+            /* 通常時は非表示 */
+            margin-left: 8px;
+            color: #ef4444;
+            /* text-red-500 */
+            cursor: pointer;
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        .admin-mode .delete-number-btn {
+            display: inline;
+            /* 管理者モードで表示 */
+        }
+
+        .delete-number-btn:hover {
+            color: #b91c1c;
+            /* text-red-700 */
+        }
     </style>
 </head>
 
@@ -111,13 +148,16 @@
 
             <section class="bg-blue-100 text-blue-800 py-4 text-center font-bold shadow-md">
                 <h3 class="text-xl mb-2">引き渡し可能な注文番号</h3>
-                <p data-key="pickup_numbers" class="text-3xl font-mono tracking-widest" style="min-height: 1.5em;">
-                    現在ありません
-                </p>
+                <div id="pickup-numbers-container"
+                    class="font-mono tracking-widest flex flex-wrap justify-center items-center px-4"
+                    style="min-height: 3rem;">
+                </div>
                 <div class="admin-only-item mt-4">
                     <input type="text" id="pickup-number-input" class="border rounded px-2 py-1" placeholder="番号を追加...">
-                    <button id="add-pickup-number" class="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600">追加</button>
-                    <button id="clear-pickup-numbers" class="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600">クリア</button>
+                    <button id="add-pickup-number"
+                        class="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600">追加</button>
+                    <button id="clear-pickup-numbers"
+                        class="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600">全てクリア</button>
                 </div>
             </section>
 
@@ -474,7 +514,7 @@
             // UI関連のイベントリスナーを設定
             setupAdminModeListeners();
             setupQuizListeners();
-            setupPickupNumberListeners(); 
+            setupPickupNumberListeners();
 
             // Firebaseの初期化処理
             try {
@@ -518,7 +558,8 @@
             }
 
             function updateDOM(data) {
-                editableElements.forEach(el => {
+                // 通常のdata-key要素を更新
+                document.querySelectorAll('[data-key]').forEach(el => {
                     const key = el.dataset.key;
                     if (data[key] !== undefined) {
                         if (el.tagName === 'IMG') {
@@ -526,19 +567,48 @@
                         } else if (el.tagName === 'INPUT') {
                             if (el.value !== data[key]) el.value = data[key];
                         } else {
-                           if (key === 'pickup_numbers') {
-                                el.textContent = data[key] ? data[key] : '現在ありません';
-                           } else {
-                                if (el.textContent !== data[key]) el.textContent = data[key];
-                           }
+                            if (el.textContent !== data[key]) el.textContent = data[key];
                         }
                     }
                 });
+
+                // ★★★★★ 修正点: 引き渡し番号の表示ロジックを修正 ★★★★★
+                const container = document.getElementById('pickup-numbers-container');
+                container.innerHTML = ''; // コンテナを完全にクリア
+
+                const numbersString = data.pickup_numbers || '';
+                const numbers = numbersString.split(', ').filter(n => n.trim() !== '');
+
+                if (numbers.length > 0) {
+                    numbers.forEach(num => {
+                        const numEl = document.createElement('span');
+                        numEl.className = 'pickup-number-item';
+                        numEl.textContent = num;
+
+                        const deleteBtn = document.createElement('span');
+                        deleteBtn.className = 'delete-number-btn';
+                        deleteBtn.textContent = '×';
+                        deleteBtn.dataset.number = num;
+                        deleteBtn.title = `番号 ${num} を削除`;
+                        numEl.appendChild(deleteBtn);
+
+                        container.appendChild(numEl);
+                    });
+                } else {
+                    const placeholder = document.createElement('span');
+                    placeholder.className = 'text-2xl';
+                    placeholder.textContent = '現在ありません';
+                    container.appendChild(placeholder);
+                }
+                // ★★★★★ 修正ここまで ★★★★★
+
+                // ヒーロー画像の更新
                 const hero = document.getElementById('hero-section');
                 if (data['hero_image'] && hero) {
                     hero.style.backgroundImage = `url('${data['hero_image']}')`;
                 }
             }
+
 
             async function initializeDefaultContent() {
                 const defaultContent = {};
@@ -559,7 +629,7 @@
                     console.error("Error saving content:", error);
                 }
             }
-            
+
             async function saveContentBatch(data) {
                 if (!contentRef || !auth.currentUser) return;
                 try {
@@ -620,7 +690,7 @@
                         toggleAdminMode(false);
                     }
                 });
-                
+
                 const handlePasswordSubmit = () => {
                     if (passwordInput.value === '0003') {
                         passwordModal.classList.add('hidden');
@@ -673,30 +743,40 @@
                 couponClose.addEventListener('click', closeCouponModal);
                 couponPrintClose.addEventListener('click', closeCouponModal);
             }
-            
+
             function setupPickupNumberListeners() {
                 const pickupNumberInput = document.getElementById('pickup-number-input');
                 const addPickupNumberBtn = document.getElementById('add-pickup-number');
                 const clearPickupNumbersBtn = document.getElementById('clear-pickup-numbers');
+                const container = document.getElementById('pickup-numbers-container');
 
                 addPickupNumberBtn.addEventListener('click', () => {
                     const newNumber = pickupNumberInput.value.trim();
-                    if (newNumber && /^\d+$/.test(newNumber)) { // 数字のみを許可
-                        const currentNumbersStr = (siteData.pickup_numbers && siteData.pickup_numbers !== '現在ありません') ? siteData.pickup_numbers : '';
-                        const numbers = currentNumbersStr ? currentNumbersStr.split(', ').map(n => parseInt(n, 10)) : [];
-                        
+                    if (newNumber && /^\d+$/.test(newNumber)) {
+                        const currentNumbersStr = siteData.pickup_numbers || '';
+                        let numbers = currentNumbersStr.split(', ').filter(n => n.trim() !== '').map(n => parseInt(n, 10));
+
                         if (!numbers.includes(parseInt(newNumber, 10))) {
                             numbers.push(parseInt(newNumber, 10));
-                            numbers.sort((a, b) => a - b); // 番号を昇順でソート
-                            const updatedNumbers = numbers.join(', ');
-                            saveContent('pickup_numbers', updatedNumbers);
+                            numbers.sort((a, b) => a - b);
+                            saveContent('pickup_numbers', numbers.join(', '));
                         }
                         pickupNumberInput.value = '';
                     }
                 });
 
                 clearPickupNumbersBtn.addEventListener('click', () => {
-                    saveContent('pickup_numbers', '現在ありません');
+                    saveContent('pickup_numbers', '');
+                });
+
+                container.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('delete-number-btn')) {
+                        const numberToDelete = e.target.dataset.number;
+                        const currentNumbersStr = siteData.pickup_numbers || '';
+                        let numbers = currentNumbersStr.split(', ').filter(n => n.trim() !== '');
+                        numbers = numbers.filter(n => n !== numberToDelete);
+                        saveContent('pickup_numbers', numbers.join(', '));
+                    }
                 });
             }
         });
