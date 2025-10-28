@@ -2,12 +2,8 @@ rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
     match /images/{allPaths=**} {
-      // 誰でも画像の読み取りを許可
-      allow read;
-      // 認証状態にかかわらず、10MB未満の画像ファイルの書き込みを許可
-      // （403エラーを回避するため、一時的に認証チェックを解除）
-      allow write: if request.resource.size < 10 * 1024 * 1024
-                  && request.resource.contentType.matches('image/.*');
+      // 警告: 誰でも画像の読み書きを許可する一時的なルール
+      allow read, write;
     }
   }
 }
