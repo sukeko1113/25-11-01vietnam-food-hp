@@ -506,7 +506,7 @@
             apiKey: "AIzaSyBLdFm8qUbVkuoerObgxk-YL_59Q-pFA3Y",
             authDomain: "vietnam-food-5cef0.firebaseapp.com",
             projectId: "vietnam-food-5cef0",
-            storageBucket: "vietnam-food-5cef0.appspot.com",
+            storageBucket: "vietnam-food-images-25-11-01",
             messagingSenderId: "661323748507",
             appId: "1:661323748507:web:0b826c7fd1c0447ee5223e",
             measurementId: "G-26NR12P8BL"
@@ -555,6 +555,7 @@
                 }
 
                 const app = initializeApp(firebaseConfig);
+                console.log("正しいバケット名:", firebaseConfig.storageBucket); // ← この行を追加
                 db = getFirestore(app);
                 auth = getAuth(app);
                 storage = getStorage(app);
