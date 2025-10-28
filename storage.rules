@@ -1,13 +1,14 @@
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
+    // 画像フォルダ以下のすべてのファイルに対するルール
     match /images/{allPaths=**} {
-      // 誰でも画像の読み取りを許可
+      // 誰でも画像の読み取り（表示）は許可する
       allow read;
-      // ログインしているユーザーのみ、10MB未満の画像ファイルの書き込みを許可
-      allow write: if request.auth != null
-                  && request.resource.size < 10 * 1024 * 1024
-                  && request.resource.contentType.matches('image/.*');
+
+      // 書き込み（アップロード）は、ログインしているユーザーのみ許可する
+      // これには、あなたのアプリが自動的に行う「匿名ログイン」も含まれます。
+      allow write: if request.auth != null;
     }
   }
 }
