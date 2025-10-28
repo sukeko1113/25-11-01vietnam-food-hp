@@ -22,7 +22,6 @@
             font-family: 'Playfair Display', serif;
         }
 
-        /* ★ 変更点: background-imageを削除し、JSで設定するようにします */
         .hero-bg {
             background-size: cover;
             background-position: center;
@@ -59,7 +58,6 @@
             display: block;
         }
 
-        /* ★ 新規追加: 管理者モード専用アイテムのスタイル */
         .admin-only-item {
             display: none;
         }
@@ -68,27 +66,22 @@
             display: block;
         }
 
-        /* ★ 新規追加: 管理者モード時のクイズ入力欄のスタイル */
         .admin-mode input[data-key="quiz_correct_ans"]:not(:read-only) {
             outline: 2px dashed #fb923c;
             background-color: #fff7ed;
         }
 
-        /* スイッチのスタイル */
         #admin-switch:checked~.dot {
             transform: translateX(100%);
             background-color: #fb923c;
         }
 
-        /* クイズリザルトのスタイル */
         .quiz-correct {
             color: #15803d;
-            /* text-green-700 */
         }
 
         .quiz-incorrect {
             color: #dc2626;
-            /* text-red-600 */
         }
     </style>
 </head>
@@ -114,6 +107,18 @@
                 <p data-key="status_message" class="text-lg animate-pulse">
                     【速報】営業中！元気に準備しています！
                 </p>
+            </section>
+
+            <section class="bg-blue-100 text-blue-800 py-4 text-center font-bold shadow-md">
+                <h3 class="text-xl mb-2">引き渡し可能な注文番号</h3>
+                <p data-key="pickup_numbers" class="text-3xl font-mono tracking-widest" style="min-height: 1.5em;">
+                    現在ありません
+                </p>
+                <div class="admin-only-item mt-4">
+                    <input type="text" id="pickup-number-input" class="border rounded px-2 py-1" placeholder="番号を追加...">
+                    <button id="add-pickup-number" class="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600">追加</button>
+                    <button id="clear-pickup-numbers" class="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600">クリア</button>
+                </div>
             </section>
 
             <section class="bg-teal-600 text-white py-4 text-center font-bold shadow-lg">
@@ -426,19 +431,16 @@
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼
-        // ★★★ここにFirebase設定を貼り付け★★★
+        // Firebase設定
         const firebaseConfig = {
             apiKey: "AIzaSyBLdFm8qUbVkuoerObgxk-YL_59Q-pFA3Y",
             authDomain: "vietnam-food-5cef0.firebaseapp.com",
             projectId: "vietnam-food-5cef0",
-            storageBucket: "vietnam-food-5cef0.appspot.com", // ".appspot.com" になっているか確認
+            storageBucket: "vietnam-food-5cef0.appspot.com",
             messagingSenderId: "661323748507",
             appId: "1:661323748507:web:0b826c7fd1c0447ee5223e",
             measurementId: "G-26NR12P8BL"
         };
-        // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
-
 
         // --- ページ切り替え機能 ---
         window.showPage = (pageId) => {
@@ -469,9 +471,10 @@
             let db, auth, contentRef;
             let siteData = {};
 
-            // 最初にUI関連のイベントリスナーを設定
+            // UI関連のイベントリスナーを設定
             setupAdminModeListeners();
             setupQuizListeners();
+            setupPickupNumberListeners(); 
 
             // Firebaseの初期化処理
             try {
@@ -482,13 +485,11 @@
                 const app = initializeApp(firebaseConfig);
                 db = getFirestore(app);
                 auth = getAuth(app);
-                contentRef = doc(db, 'siteContent', 'content'); // シンプルなパスに変更
+                contentRef = doc(db, 'siteContent', 'content');
 
-                // 匿名認証でサインイン
                 await signInAnonymously(auth);
                 console.log("Firebase Auth: Signed in anonymously.");
 
-                // 認証後にFirestoreのリスナーを開始
                 setupRealtimeListener();
 
             } catch (error) {
@@ -525,7 +526,11 @@
                         } else if (el.tagName === 'INPUT') {
                             if (el.value !== data[key]) el.value = data[key];
                         } else {
-                            if (el.textContent !== data[key]) el.textContent = data[key];
+                           if (key === 'pickup_numbers') {
+                                el.textContent = data[key] ? data[key] : '現在ありません';
+                           } else {
+                                if (el.textContent !== data[key]) el.textContent = data[key];
+                           }
                         }
                     }
                 });
@@ -554,7 +559,7 @@
                     console.error("Error saving content:", error);
                 }
             }
-
+            
             async function saveContentBatch(data) {
                 if (!contentRef || !auth.currentUser) return;
                 try {
@@ -615,7 +620,7 @@
                         toggleAdminMode(false);
                     }
                 });
-
+                
                 const handlePasswordSubmit = () => {
                     if (passwordInput.value === '0003') {
                         passwordModal.classList.add('hidden');
@@ -668,5 +673,34 @@
                 couponClose.addEventListener('click', closeCouponModal);
                 couponPrintClose.addEventListener('click', closeCouponModal);
             }
+            
+            function setupPickupNumberListeners() {
+                const pickupNumberInput = document.getElementById('pickup-number-input');
+                const addPickupNumberBtn = document.getElementById('add-pickup-number');
+                const clearPickupNumbersBtn = document.getElementById('clear-pickup-numbers');
+
+                addPickupNumberBtn.addEventListener('click', () => {
+                    const newNumber = pickupNumberInput.value.trim();
+                    if (newNumber && /^\d+$/.test(newNumber)) { // 数字のみを許可
+                        const currentNumbersStr = (siteData.pickup_numbers && siteData.pickup_numbers !== '現在ありません') ? siteData.pickup_numbers : '';
+                        const numbers = currentNumbersStr ? currentNumbersStr.split(', ').map(n => parseInt(n, 10)) : [];
+                        
+                        if (!numbers.includes(parseInt(newNumber, 10))) {
+                            numbers.push(parseInt(newNumber, 10));
+                            numbers.sort((a, b) => a - b); // 番号を昇順でソート
+                            const updatedNumbers = numbers.join(', ');
+                            saveContent('pickup_numbers', updatedNumbers);
+                        }
+                        pickupNumberInput.value = '';
+                    }
+                });
+
+                clearPickupNumbersBtn.addEventListener('click', () => {
+                    saveContent('pickup_numbers', '現在ありません');
+                });
+            }
         });
     </script>
+</body>
+
+</html>
