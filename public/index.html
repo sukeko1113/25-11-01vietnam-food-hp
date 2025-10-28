@@ -149,6 +149,16 @@
                 <p class="text-lg">
                     ✨ オープンキャンパスチケット利用可能店舗です ✨
                 </p>
+                <div class="admin-only-item mt-2">
+                     <label for="ticket-banner-switch" class="flex items-center justify-center cursor-pointer">
+                        <span class="mr-2 text-sm font-bold text-gray-700">チケット表示</span>
+                        <div class="relative">
+                            <input type="checkbox" id="ticket-banner-switch" class="sr-only peer">
+                            <div class="block bg-gray-600 w-10 h-6 rounded-full peer-checked:bg-orange-300"></div>
+                            <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform"></div>
+                        </div>
+                    </label>
+                </div>
             </section>
 
             <section id="hero-section" class="hero-bg text-white min-h-[50vh] flex items-center"
@@ -389,14 +399,6 @@
     </div>
 
     <div class="fixed bottom-4 right-4 z-50 space-y-2">
-        <label for="ticket-banner-switch" class="flex items-center cursor-pointer bg-white/80 backdrop-blur-md p-2 rounded-lg shadow-lg admin-only-item">
-            <span class="mr-2 text-sm font-bold text-gray-700">チケット表示</span>
-            <div class="relative">
-                <input type="checkbox" id="ticket-banner-switch" class="sr-only peer">
-                <div class="block bg-gray-600 w-10 h-6 rounded-full peer-checked:bg-orange-300"></div>
-                <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform"></div>
-            </div>
-        </label>
         <label for="admin-switch"
             class="flex items-center cursor-pointer bg-white/80 backdrop-blur-md p-2 rounded-lg shadow-lg">
             <span class="mr-2 text-sm font-bold text-gray-700">管理者モード</span>
